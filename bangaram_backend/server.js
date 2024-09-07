@@ -1,6 +1,6 @@
 import express from 'express'
 const app = express()
-const port = 5000 || process.env.PORT
+const port = process.env.PORT || 5000
 import dotenv from 'dotenv'
 import connectMongoDb from './config/db.js'
 import cors from 'cors'

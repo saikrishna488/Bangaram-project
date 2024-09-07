@@ -65,7 +65,7 @@ const FriendsPage = () => {
         <div>
           <h2 className="text-2xl font-semibold text-white mb-4">Invited Friends</h2>
           <ul className="space-y-4">
-            {user.invited_friends.map((friend, index) => (
+            {user.invited_friends && user.invited_friends.map((friend, index) => (
               <li key={index} className="bg-gray-600 dark:bg-gray-700 p-4 rounded-lg shadow-md flex items-center justify-between">
                 <span className="text-lg font-semibold text-gray-200">{friend}</span>
                 <span className="text-lg font-semibold text-yellow-400"> +10</span>

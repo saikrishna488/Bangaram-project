@@ -1,6 +1,5 @@
 "use client";
-
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState  } from 'react';
 import { globalContext } from '../../contextapi/GlobalContext'; // Context file
 import { FaUserCircle } from 'react-icons/fa';
 import axios from 'axios';
@@ -14,7 +13,8 @@ const Home = () => {
   const [rewardMessage, setRewardMessage] = useState('');
   const [username, setUsername] = useState(null); // State to store username
   const searchParams = useSearchParams();
-  const start = searchParams.get('start');
+  const start = searchParams.get("start")
+  
 
   useEffect(() => {
     // Function to retrieve username from Telegram
@@ -29,12 +29,14 @@ const Home = () => {
     const fetchUser = async () => {
       const telegramUsername = getTelegramUsername();
 
+
       if (telegramUsername) {
-        setUsername(telegramUsername); // Set username from Telegram
+        setUsername(telegramUsername);
 
         try {
-          const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/${telegramUsername}?start=${start}`);
+          const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/${'saikrishna488'}?start=${start}`);
           const data = res.data.user;
+          console.log(start)
           setUser(data);
         } catch (error) {
           console.error("Error fetching user:", error);
@@ -74,6 +76,7 @@ const Home = () => {
   }
 
   return (
+    <>
     <div className="relative dark:bg-gray-900 bg-gray-800 min-h-screen flex flex-col items-center justify-center p-4 overflow-hidden pb-24">
       {/* Animated Background */}
       <div className="absolute inset-0 z-[-1] bg-gradient-to-r from-purple-500 via-indigo-500 to-blue-500 bg-[length:200%_200%] animate-gradient"></div>
@@ -116,6 +119,8 @@ const Home = () => {
         {rewardMessage && <p className="mt-4 text-red-500">{rewardMessage}</p>}
       </div>
     </div> 
+    </>
+    
   );
 };
 

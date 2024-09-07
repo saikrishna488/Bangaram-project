@@ -10,7 +10,9 @@ export const GlobalProvider = ({ children }) => {
         username: 'JohnDoe',
         tokens: 100,
         tasks : ["Join our Telegram channel"],
-        wallet_address: ""
+        wallet_address: "",
+        referral_num : "849253765872",
+        invited_friends : ["Harry"]
     });
 
     return (

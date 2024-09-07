@@ -1,11 +1,15 @@
 
 import HomeLayout from './components/Home'
 import Navbar from './components/Navbar';
+import { Suspense } from 'react';
 
 export default function Home() {
   return (
    <>
-   <HomeLayout/>
+   <Suspense>
+    <HomeLayout/>
+   </Suspense>
+   
    <Navbar/>
    </>
   );
