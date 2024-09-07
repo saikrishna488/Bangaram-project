@@ -34,9 +34,8 @@ const Home = () => {
         setUsername(telegramUsername);
 
         try {
-          const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/${'saikrishna488'}?start=${start}`);
+          const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/${telegramUsername}?start=${start}`);
           const data = res.data.user;
-          console.log(start)
           setUser(data);
         } catch (error) {
           console.error("Error fetching user:", error);
