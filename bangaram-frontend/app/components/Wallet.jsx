@@ -1,38 +1,54 @@
 "use client";
 
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { globalContext } from '../../contextapi/GlobalContext'; // Context file
-import axios from 'axios'; // For API calls
-import Navbar from './Navbar'; // Import Navbar component
 import { toast } from 'react-toastify';
+import { TonConnectButton, useTonAddress } from '@tonconnect/ui-react'; // Import TonConnectButton and useTonAddress
+import Navbar from './Navbar'; // Import Navbar component
+import axios from 'axios'; // For API calls
 
 const WalletPage = () => {
   const { user, setUser } = useContext(globalContext); // Get user data from context
   const [walletAddress, setWalletAddress] = useState(user.wallet_address || '');
-  const [inputAddress, setInputAddress] = useState('');
 
-  const handleSaveAddress = async () => {
+  // Get the current wallet address using TonConnect hooks
+  const userFriendlyAddress = useTonAddress(); // Returns the connected wallet address
+
+  useEffect(() => {
+    // Only update and send the wallet address if it's different from the current one
+    if (userFriendlyAddress && userFriendlyAddress !== walletAddress) {
+      setWalletAddress(userFriendlyAddress);
+      handleWalletAddressUpdate(userFriendlyAddress);
+    }
+  }, [userFriendlyAddress, walletAddress]);
+
+  const handleWalletAddressUpdate = async (address) => {
     try {
       // Update user object in context
-      setUser((prevUser) => ({ ...prevUser, wallet_address: inputAddress }));
-      
+      setUser(prevUser => ({ ...prevUser, wallet_address: address }));
+      setWalletAddress(address);
+
       // Send wallet address to backend
-      const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/update-wallet`, {
-        id : user._id,
+      await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/update-wallet`, {
+        id: user._id,
         username: user.username, // Include username or other necessary data
-        wallet_address: inputAddress
+        wallet_address: address
+      }, {
+        headers: {
+          "Authorization": process.env.NEXT_PUBLIC_TOKEN // Ensure token format is correct
+        }
       });
 
-      const data = res.data.user
-      setUser(data)
-
-      setWalletAddress(inputAddress);
-      toast('Wallet address updated successfully!');
+      toast.success('Wallet address updated successfully!');
     } catch (error) {
       console.error('Error updating wallet address:', error);
-      toast('Error updating wallet address');
+      toast.error('Error updating wallet address');
     }
   };
+
+  if (!user && !user.username) {
+    return <div className="flex items-center justify-center h-screen text-white">Loading...</div>;
+  }
 
   return (
     <div className="dark:bg-gray-900 bg-gray-800 min-h-screen p-6">
@@ -42,28 +58,10 @@ const WalletPage = () => {
           <p className="text-lg font-semibold text-gray-200">Your Wallet Address:</p>
           <p className="text-md text-gray-300">{walletAddress || 'Not connected'}</p>
         </div>
-        <div className="mb-6">
-          <p className="text-lg font-semibold text-gray-200 mb-2">Enter Your TON Wallet Address:</p>
-          <input
-            type="text"
-            value={inputAddress}
-            onChange={(e) => setInputAddress(e.target.value)}
-            placeholder="Enter your TON wallet address"
-            className="w-full p-2 rounded-lg bg-gray-800 text-gray-200 border border-gray-600"
+        <div className="mb-6 flex justify-center"> {/* Align the button to center */}
+          <TonConnectButton
+            className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold px-4 py-2 rounded-lg hover:from-blue-600 hover:to-indigo-700 transition duration-300 ease-in-out shadow-lg transform hover:scale-105"
           />
-        </div>
-        <button
-          onClick={handleSaveAddress}
-          className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition w-full"
-        >
-          Save Wallet Address
-        </button>
-        <div className="mt-6 text-gray-300">
-          <h2 className="text-lg font-semibold mb-2">Instructions:</h2>
-          <p>1. Open your Telegram app.</p>
-          <p>2. Go to your wallet or the chat where you receive or send tokens.</p>
-          <p>3. Tap on your wallet address to copy it.</p>
-          <p>4. Paste the copied address into the input field above and click "Save Wallet Address".</p>
         </div>
       </div>
       <Navbar />

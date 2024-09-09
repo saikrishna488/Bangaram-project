@@ -13,3 +13,17 @@ const isOneDayCompleted = (lastCheckIn) => {
 };
 
 export { isOneDayCompleted };
+
+function getRemainingTime(lastCheckin) {
+    const now = new Date();
+    const nextAvailableCheckin = new Date(new Date(lastCheckin).getTime() + 24 * 60 * 60 * 1000);
+    const timeDifference = nextAvailableCheckin - now;
+
+    const hours = Math.floor(timeDifference / (1000 * 60 * 60));
+    const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+
+    return `${hours}h ${minutes}m ${seconds}s`;
+}
+
+export {getRemainingTime}

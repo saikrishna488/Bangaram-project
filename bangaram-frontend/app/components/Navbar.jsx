@@ -1,4 +1,4 @@
-import { FaHome, FaTasks, FaUsers, FaWallet } from 'react-icons/fa'; // React icons
+import { FaHome, FaTasks, FaUsers, FaWallet, FaTrophy } from 'react-icons/fa'; // React icons
 import Link from 'next/link';
 
 const Navbar = () => {
@@ -29,6 +29,13 @@ const Navbar = () => {
         <div className="flex flex-col items-center cursor-pointer text-center">
           <FaWallet className="text-2xl mb-1 sm:text-3xl" />
           <span className="text-xs sm:text-sm">Wallet</span>
+        </div>
+      </Link>
+      
+      <Link href="/leaderboard" passHref>
+        <div className="flex flex-col items-center cursor-pointer text-center">
+          <FaTrophy className="text-2xl mb-1 sm:text-3xl" />
+          <span className="text-xs sm:text-sm">Leaderboard</span>
         </div>
       </Link>
     </nav>

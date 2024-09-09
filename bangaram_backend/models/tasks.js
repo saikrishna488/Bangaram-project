@@ -8,6 +8,10 @@ const taskSchema = new mongoose.Schema({
         required : true,
         unique: true
     },
+    type : {
+        type : String,
+        required : true
+    },
     url : {
         type : String,
         required : true

@@ -34,6 +34,10 @@ const userSchema = new mongoose.Schema({
     invited_friends : {
         type: [String],
         required : false
+    },
+    telegram_id : {
+        type : String,
+        required : true
     }
 });
 

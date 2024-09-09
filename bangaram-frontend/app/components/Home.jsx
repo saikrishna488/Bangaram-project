@@ -1,5 +1,5 @@
 "use client";
-import React, { useContext, useEffect, useState  } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { globalContext } from '../../contextapi/GlobalContext'; // Context file
 import { FaUserCircle } from 'react-icons/fa';
 import axios from 'axios';
@@ -10,31 +10,44 @@ const Home = () => {
   const { user, setUser } = useContext(globalContext);
   const [loading, setLoading] = useState(true);
   const [rewardClaimed, setRewardClaimed] = useState(false);
-  const [rewardMessage, setRewardMessage] = useState('');
   const [username, setUsername] = useState(null); // State to store username
   const searchParams = useSearchParams();
-  const start = searchParams.get("start")
-  
+  const start = searchParams.get("start") || '';
 
   useEffect(() => {
-    // Function to retrieve username from Telegram
     const getTelegramUsername = () => {
+      if (process.env.NEXT_PUBLIC_NODE_ENV === 'development') {
+        return {
+          telegramUsername: 'captain488',
+          telegram_id: '745290157'
+        };
+      }
+
       if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe) {
         const telegramUsername = window.Telegram.WebApp.initDataUnsafe.user.username;
-        return telegramUsername;
+        const telegram_id = window.Telegram.WebApp.initDataUnsafe.user.username;
+        return { telegramUsername, telegram_id };
       }
+
       return null;
     };
 
     const fetchUser = async () => {
-      const telegramUsername = getTelegramUsername();
-
+      const { telegramUsername, telegram_id } = getTelegramUsername();
 
       if (telegramUsername) {
         setUsername(telegramUsername);
 
         try {
-          const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/${telegramUsername}?start=${start}`);
+          const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user`, {
+            telegram_id,
+            username: telegramUsername,
+            start: start
+          }, {
+            headers: {
+              "Authorization": process.env.NEXT_PUBLIC_TOKEN
+            }
+          });
           const data = res.data.user;
           setUser(data);
         } catch (error) {
@@ -48,78 +61,105 @@ const Home = () => {
     };
 
     fetchUser();
-  },  [setUser]);
+  }, []);
+
+
+
+  // useEffect(() => {
+
+  //   if(user.username){
+  //     const fetchRewards = async () => {
+  //       const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/daily-reward`, {
+  //         username: username,
+  //       }, {
+  //         headers: {
+  //           "Authorization": process.env.NEXT_PUBLIC_TOKEN
+  //         }
+  //       });
+  //       const data = res.data;
+  //       console.log(data)
+  //       if (!data.msg) {
+  //         setRewardClaimed(true)
+  //       }
+  //       else{
+  //         setRewardClaimed(false)
+  //       }
+  //     }
+  
+  //     fetchRewards()
+  //   }
+  // }, [user])
 
   const handleClaimReward = async () => {
-    if (!username) {
-      toast('Please wait, username is being loaded.');
-      return;
-    }
-
     try {
-      const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/claim-daily-reward`, { username });
-      if (res.data.msg) {
-        setUser((prevUser) => ({ ...prevUser, tokens: prevUser.tokens + 10 }));
+      const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/daily-reward`, { username }, {
+        headers: {
+          "Authorization": process.env.NEXT_PUBLIC_TOKEN
+        }
+      });
+      if (res.data.msg == true) {
+        setUser(res.data.user);
         setRewardClaimed(true);
-        toast('Reward claimed');
-      } else {
-        toast('Comeback tomorrow');
+        toast.success('Reward claimed');
+      }
+
+      if (res.data.remainingTime) {
+        toast.success("Come back in " + res.data.remainingTime)
+      }
+      else {
+        toast("Error occured")
       }
     } catch (error) {
       console.error("Error claiming reward:", error);
+      toast("Error occured ")
     }
   };
 
   if (loading) {
-    return <div className="flex items-center justify-center h-screen">Loading...</div>;
+    return <div className="flex items-center justify-center h-screen text-white">Loading...</div>;
+  }
+
+  if (!user && !user.username) {
+    setLoading(true)
+    return null;
   }
 
   return (
-    <>
-    <div className="relative dark:bg-gray-900 bg-gray-800 min-h-screen flex flex-col items-center justify-center p-4 overflow-hidden pb-24">
-      {/* Animated Background */}
-      <div className="absolute inset-0 z-[-1] bg-gradient-to-r from-purple-500 via-indigo-500 to-blue-500 bg-[length:200%_200%] animate-gradient"></div>
-
+    <div className="relative min-h-screen flex flex-col items-center justify-center bg-gray-900 text-white p-4 overflow-hidden pb-20">
       {/* User Info Section */}
-      <div className="bg-gray-900 dark:bg-gray-800 text-white p-8 rounded-lg shadow-lg w-full max-w-md text-center mb-8">
+      <div className="bg-gray-800 p-6 md:p-8 rounded-lg shadow-lg w-full max-w-lg text-center mb-8 border border-gray-700">
         {/* User Icon and Name */}
-        <div className="flex flex-col items-center mb-6">
-          <FaUserCircle size={80} className="text-gray-300 dark:text-gray-500 mb-4" />
-          <h1 className="text-3xl font-bold mb-2">{user.username}</h1>
+        <div className="flex flex-col items-center mb-4">
+          <FaUserCircle size={80} className="text-gray-400 mb-4" />
+          <h1 className="text-3xl md:text-4xl font-bold mb-2">{user.username}</h1>
         </div>
 
         {/* Bangaram Balance Section */}
-        <div className="relative p-8 bg-gray-800 dark:bg-gray-700 rounded-full shadow-inner mb-8">
-          <div className="absolute inset-0 bg-blue-600 rounded-full blur-xl opacity-30"></div>
-          <div className="relative z-10">
-            <span className="block text-4xl font-bold">Bangaram: {user.tokens}</span>
-            <img
-              src="logo.png" // Replace with actual logo path
-              alt="Bangaram Logo"
-              width={50}
-              height={50}
-              className="mx-auto mt-4"
-            />
-          </div>
+        <div className="relative p-4 md:p-6 bg-gray-700 rounded-full shadow-lg mb-8 flex items-center justify-center">
+          <img
+            src="logo.png" // Replace with actual logo path
+            alt="Bangaram Logo"
+            width={40}
+            height={40}
+            className="mx-2"
+          />
+          <span className="text-xl md:text-2xl font-semibold">{user.tokens} BGRM</span>
         </div>
       </div>
 
       {/* Daily Reward Card */}
-      <div className="bg-gray-900 dark:bg-gray-800 text-white p-6 rounded-lg shadow-lg w-full max-w-md text-center">
-        <h2 className="text-2xl font-bold mb-4">Daily Reward</h2>
-        <p className="mb-4">Claim your daily reward of 10 Bangaram tokens!</p>
+      <div className="bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-lg text-center border border-gray-700">
+        <h2 className="text-2xl md:text-3xl font-semibold mb-4">Daily Reward</h2>
+        <p className="mb-4 text-lg">Claim your daily reward of 10 Bangaram tokens!</p>
         <button
           onClick={handleClaimReward}
-          className={`px-6 py-2 rounded-lg text-white font-semibold ${rewardClaimed ? 'bg-gray-500 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'}`}
+          className={`px-6 py-2 md:px-8 md:py-3 rounded-lg font-semibold text-white ${rewardClaimed ? 'bg-gray-600 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
           disabled={rewardClaimed}
         >
           {rewardClaimed ? 'Reward Claimed' : 'Claim Reward'}
         </button>
-        {rewardMessage && <p className="mt-4 text-red-500">{rewardMessage}</p>}
       </div>
-    </div> 
-    </>
-    
+    </div>
   );
 };
 

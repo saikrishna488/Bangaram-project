@@ -2,13 +2,15 @@ import express from 'express'
 const router = express.Router();
 import userModel from '../models/user.js';
 import taskModel from '../models/tasks.js'
+import adminModel from '../models/admin.js';
 import { generateReferral } from '../essentials/referral.js';
-import { isOneDayCompleted } from '../essentials/referral.js'
+import { isOneDayCompleted, getRemainingTime } from '../essentials/referral.js'
+import jwtVerify from '../jwt/jwtVerify.js'
 
 
-router.get('/:username', async (req, res) => {
-    const username = req.params.username;
-    const { start } = req.query;
+router.post('/', jwtVerify, async (req, res) => {
+    const { start, username, telegram_id } = req.body;
+    console.log(start)
 
     try {
         if (!username) {
@@ -27,6 +29,8 @@ router.get('/:username', async (req, res) => {
             if (start) {
                 // If a referral number is provided, check if it is valid
                 const referrer = await userModel.findOne({ referral_num: start });
+                console.log(referrer)
+                
 
                 if (referrer) {
                     tokens += 10; // Add tokens for the referral
@@ -42,9 +46,12 @@ router.get('/:username', async (req, res) => {
                 username,
                 tokens,
                 referral_num: referral,
-                last_checkin: date
+                // last_checkin: date,
+                telegram_id
             });
 
+
+            console.log(user)
             return res.json({
                 user,
                 msg: true
@@ -66,7 +73,7 @@ router.get('/:username', async (req, res) => {
     }
 });
 
-router.post('/update-wallet', async (req, res) => {
+router.post('/update-wallet', jwtVerify, async (req, res) => {
     const { id, wallet_address, username } = req.body;
 
     try {
@@ -99,7 +106,7 @@ router.post('/update-wallet', async (req, res) => {
     }
 });
 
-router.post('/claim-daily-reward', async (req, res) => {
+router.post('/daily-reward', jwtVerify, async (req, res) => {
     const { username } = req.body;
 
     try {
@@ -117,7 +124,168 @@ router.post('/claim-daily-reward', async (req, res) => {
             user.tokens += 10;
             user.last_checkin = now;
 
+            
             // Save the user data
+            await user.save();
+            console.log("tokens claimed")
+
+            return res.json({
+                msg: true,
+                user,
+            });
+        } else {
+            // Calculate remaining time
+            const remainingTime = getRemainingTime(user.last_checkin);
+            console.log(user.last_checkin)
+            return res.json({
+                msg: false,
+                remainingTime
+            });
+        }
+    } catch (error) {
+        console.error('Error claiming daily reward:', error);
+        return res.status(500).json({ msg: false });
+    }
+});
+
+router.post('/admin', jwtVerify, async (req, res) => {
+    try {
+        const { key } = req.body;
+
+        // Check if key is provided
+        if (!key) {
+            return res.json({
+                msg: false,
+                error: "Admin key is missing"
+            });
+        }
+
+        // Find the admin by key
+        const admin = await adminModel.findOne({ key });
+
+        if (admin) {
+            return res.json({
+                msg: true,
+                data: admin
+            });
+        } else {
+            return res.json({
+                msg: false,
+                error: "Admin not found"
+            });
+        }
+
+    } catch (err) {
+        return res.json({
+            msg: false,
+            error: "Server error"
+        });
+    }
+});
+
+
+router.post('/addAdmin', jwtVerify, async (req, res) => {
+    try {
+        const { key, secret } = req.body;
+
+        // Ensure both key and secret are provided
+        if (!key || !secret) {
+            return res.json({
+                msg: false,
+                error: 'Key and secret are required'
+            });
+        }
+
+        // Check if the provided secret matches the JWT secret
+        if (secret !== process.env.JWT_SECRET) {
+            return res.json({
+                msg: false,
+                error: 'Invalid secret'
+            });
+        }
+
+        // Create a new admin
+        const admin = await adminModel.create({ key });
+
+        if (admin) {
+            return res.json({
+                msg: true,
+                data: admin
+            });
+        } else {
+            return res.json({
+                msg: false,
+                error: 'Failed to create admin'
+            });
+        }
+
+    } catch (err) {
+        console.error('Error adding admin:', err);
+        return res.json({
+            msg: false,
+            error: 'Server error'
+        });
+    }
+});
+
+router.post('/delete', jwtVerify, async (req, res) => {
+    try {
+        const { username } = req.body;
+
+        // Ensure username is provided
+        if (!username) {
+            return res.json({
+                msg: false,
+                error: 'Username is required'
+            });
+        }
+
+        // Attempt to delete the user
+        const result = await userModel.deleteOne({ username });
+
+        if (result.deletedCount > 0) {
+            // User was successfully deleted
+            return res.json({
+                msg: true
+            });
+        } else {
+            // No user found with the given username
+            return res.json({
+                msg: false,
+                error: 'User not found'
+            });
+        }
+        console.log("user not found")
+
+    } catch (err) {
+        console.error('Error deleting user:', err);
+        return res.json({
+            msg: false,
+            error: 'Server error'
+        });
+    }
+});
+
+router.post('/update', jwtVerify, async (req, res) => {
+    try {
+        const { username, tokens } = req.body;
+
+        // Ensure username is provided
+        if (!username || !tokens) {
+            return res.json({
+                msg: false,
+                error: 'Username and tokens are required'
+            });
+        }
+
+        // Find the user by username
+        const user = await userModel.findOne({ username });
+
+        if (user) {
+            // Update the user's tokens
+            user.tokens = tokens;
+
+            // Save the updated user
             await user.save();
 
             return res.json({
@@ -125,13 +293,22 @@ router.post('/claim-daily-reward', async (req, res) => {
                 user
             });
         } else {
-            return res.json({ msg: false});
+            // No user found with the given username
+            return res.json({
+                msg: false,
+                error: 'User not found'
+            });
         }
-    } catch (error) {
-        console.error('Error claiming daily reward:', error);
-        return res.status(500).json({ message: false });
+
+    } catch (err) {
+        console.error('Error updating user:', err);
+        return res.json({
+            msg: false,
+            error: 'Server error'
+        });
     }
 });
+
 
 
 
