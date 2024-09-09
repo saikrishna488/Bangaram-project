@@ -33,7 +33,7 @@ const LeaderBoard = () => {
                 console.error("Error fetching leaderboard:", error);
                 toast.error("Error occurred while fetching leaderboard.");
             }
-        };
+        }; 
 
         if (user?.username) {
             fetchUsers();
