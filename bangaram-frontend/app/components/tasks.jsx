@@ -39,6 +39,8 @@ const TasksPage = () => {
             toast.error("Connect wallet");
             return;
           }
+        }
+        else if(task.type === "free"){
         } else {
           window.open(task.url);
         }
