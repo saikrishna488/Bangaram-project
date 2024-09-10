@@ -20,11 +20,17 @@ const FriendsPage = () => {
 
     // Detailed description for sharing
     const description = `
-      Join me on Bangaram and start earning tokens today! 
-      Bangaram is an exciting new platform that lets you earn rewards 
-      while participating in a growing community. Don't miss out on this opportunity! 
-      Use my referral link to get started and take advantage of exclusive benefits.
-    `;
+    🚀 **Join me on Bangaram and start earning tokens today!** 🚀
+
+    Bangaram is an exciting new platform that lets you earn rewards 
+    while participating in a growing community. 🌟
+
+    Don't miss out on this opportunity! Use my referral link to get 
+    started and take advantage of exclusive benefits. 🎉
+
+    Let’s grow together and make the most out of this amazing journey! 💪
+`;
+
 
     // Generate the Telegram share URL with the referral link and description
     const telegramShareUrl = `https://t.me/share/url?url=${encodeURIComponent(referralLink)}&text=${encodeURIComponent(description)}`;
