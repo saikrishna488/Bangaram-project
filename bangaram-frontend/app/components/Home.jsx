@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useContext, useEffect, useState } from 'react';
 import { globalContext } from '../../contextapi/GlobalContext'; // Context file
 import { FaUserCircle } from 'react-icons/fa';
@@ -10,7 +11,7 @@ const Home = () => {
   const { user, setUser } = useContext(globalContext);
   const [loading, setLoading] = useState(true);
   const [rewardClaimed, setRewardClaimed] = useState(false);
-  const [username, setUsername] = useState(null); // State to store username
+  const [username, setUsername] = useState(null);
   const searchParams = useSearchParams();
   const start = searchParams.get("start") || '';
 
@@ -57,38 +58,11 @@ const Home = () => {
         console.log('Username not found, still loading...');
       }
 
-      setLoading(false); // Set loading to false when done
+      setLoading(false);
     };
 
     fetchUser();
   }, []);
-
-
-
-  // useEffect(() => {
-
-  //   if(user.username){
-  //     const fetchRewards = async () => {
-  //       const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/daily-reward`, {
-  //         username: username,
-  //       }, {
-  //         headers: {
-  //           "Authorization": process.env.NEXT_PUBLIC_TOKEN
-  //         }
-  //       });
-  //       const data = res.data;
-  //       console.log(data)
-  //       if (!data.msg) {
-  //         setRewardClaimed(true)
-  //       }
-  //       else{
-  //         setRewardClaimed(false)
-  //       }
-  //     }
-  
-  //     fetchRewards()
-  //   }
-  // }, [user])
 
   const handleClaimReward = async () => {
     try {
@@ -104,14 +78,13 @@ const Home = () => {
       }
 
       if (res.data.remainingTime) {
-        toast.success("Come back in " + res.data.remainingTime)
-      }
-      else {
-        toast("Error occured")
+        toast.success("Come back in " + res.data.remainingTime);
+      } else {
+        toast("Error occurred");
       }
     } catch (error) {
       console.error("Error claiming reward:", error);
-      toast("Error occured ")
+      toast("Error occurred");
     }
   };
 
@@ -119,41 +92,38 @@ const Home = () => {
     return <div className="flex items-center justify-center h-screen text-white">Loading...</div>;
   }
 
-  if (!user && !user.username) {
-    setLoading(true)
+  if (!user || !user.username) {
+    setLoading(true);
     return null;
   }
 
   return (
-    <div className="relative min-h-screen flex flex-col items-center justify-center bg-gray-900 text-white p-4 overflow-hidden pb-20">
-      {/* User Info Section */}
-      <div className="bg-gray-800 p-6 md:p-8 rounded-lg shadow-lg w-full max-w-lg text-center mb-8 border border-gray-700">
-        {/* User Icon and Name */}
-        <div className="flex flex-col items-center mb-4">
-          <FaUserCircle size={80} className="text-gray-400 mb-4" />
-          <h1 className="text-3xl md:text-4xl font-bold mb-2">{user.username}</h1>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-black to-gray-900 text-white px-4 py-8 pb-48"> {/* Increased pb-48 */}
+      {/* User Profile Card */}
+      <div className="bg-black bg-opacity-90 p-6 md:p-8 lg:p-10 rounded-lg shadow-md w-full max-w-sm md:max-w-md lg:max-w-lg text-center border border-gray-800 mb-8">
+        <div className="flex flex-col items-center mb-6">
+          <FaUserCircle size={80} className="text-gray-500 mb-4" />
+          <h1 className="text-2xl md:text-3xl lg:text-4xl font-semibold mb-2">{user.username}</h1>
         </div>
-
-        {/* Bangaram Balance Section */}
-        <div className="relative p-4 md:p-6 bg-gray-700 rounded-full shadow-lg mb-8 flex items-center justify-center">
+        <div className="bg-gray-800 p-4 rounded-lg shadow-lg flex items-center justify-center">
           <img
             src="logo.png" // Replace with actual logo path
             alt="Bangaram Logo"
-            width={40}
-            height={40}
-            className="mx-2"
+            width={30}
+            height={30}
+            className="mr-2"
           />
-          <span className="text-xl md:text-2xl font-semibold">{user.tokens} BGRM</span>
+          <span className="text-xl md:text-2xl font-semibold">{user.tokens}</span>
         </div>
       </div>
 
-      {/* Daily Reward Card */}
-      <div className="bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-lg text-center border border-gray-700">
-        <h2 className="text-2xl md:text-3xl font-semibold mb-4">Daily Reward</h2>
-        <p className="mb-4 text-lg">Claim your daily reward of 10 Bangaram tokens!</p>
+      {/* Daily Reward Section */}
+      <div className="bg-black bg-opacity-90 p-6 md:p-8 lg:p-10 rounded-lg shadow-md w-full max-w-sm md:max-w-md lg:max-w-lg text-center border border-gray-800">
+        <h2 className="text-xl md:text-2xl lg:text-3xl font-bold mb-4">Daily Reward</h2>
+        <p className="text-base md:text-lg lg:text-xl mb-6">Claim your daily reward of 10 Bangaram tokens!</p>
         <button
           onClick={handleClaimReward}
-          className={`px-6 py-2 md:px-8 md:py-3 rounded-lg font-semibold text-white ${rewardClaimed ? 'bg-gray-600 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
+          className={`px-4 py-2 md:px-6 md:py-3 rounded-full font-semibold ${rewardClaimed ? 'bg-gray-600 cursor-not-allowed' : 'bg-gradient-to-r from-yellow-400 to-yellow-600 hover:from-yellow-500 hover:to-yellow-700'} text-black transition duration-300 ease-in-out`}
           disabled={rewardClaimed}
         >
           {rewardClaimed ? 'Reward Claimed' : 'Claim Reward'}

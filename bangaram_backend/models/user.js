@@ -37,7 +37,8 @@ const userSchema = new mongoose.Schema({
     },
     telegram_id : {
         type : String,
-        required : true
+        required : true,
+        unique : true
     }
 });
 

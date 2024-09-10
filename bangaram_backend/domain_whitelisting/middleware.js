@@ -1,6 +1,6 @@
 // domainWhitelistMiddleware.js
 
-const allowedDomains = ['localhost', '127.0.0.1'];
+const allowedDomains = ['bangaram-project-saikrishna488s-projects.vercel.app', 'bangaram-project.vercel.app','bangaram-project-git-main-saikrishna488s-projects.vercel.app','127.0.0.1','localhost'];
 
 function domainWhitelistMiddleware(req, res, next) {
     const origin = req.headers.origin;

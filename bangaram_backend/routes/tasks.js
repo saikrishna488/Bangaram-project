@@ -115,6 +115,7 @@ router.post('/validate', jwtVerify, async (req, res) => {
 
         // Check if the task has already been completed by the user
         if (!user.tasks.includes(text)) {
+
             if (task.type === 'join_channel') {
                 const chat_id_trim = task.url.replace("https://t.me/", ""); 
                 const chat_id = "@"+ chat_id_trim;
@@ -141,8 +142,10 @@ router.post('/validate', jwtVerify, async (req, res) => {
                     });
                 }
             } else {
+
                 user.tokens += Number(reward);
                 user.tasks.push(text);
+
 
                 // Save the updated user
                 await user.save();
@@ -188,6 +191,15 @@ router.post('/delete', jwtVerify, async (req, res) => {
         const result = await taskModel.deleteOne({ text });
 
         if (result.deletedCount > 0) {
+            // Find all users that have this task
+            const users = await userModel.find({ tasks: text });
+
+            // Update each user's task array by removing the deleted task
+            await Promise.all(users.map(async (user) => {
+                user.tasks = user.tasks.filter((task) => task !== text);
+                await user.save();  // Save the updated user document
+            }));
+
             return res.status(200).json({
                 msg: true,
                 message: 'Task deleted successfully'
@@ -198,7 +210,7 @@ router.post('/delete', jwtVerify, async (req, res) => {
                 message: 'Task not found'
             });
         }
-        
+
     } catch (error) {
         console.error('Error deleting task:', error);
         return res.status(500).json({
@@ -208,6 +220,7 @@ router.post('/delete', jwtVerify, async (req, res) => {
         });
     }
 });
+
 
 
 

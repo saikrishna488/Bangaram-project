@@ -20,15 +20,23 @@ connectMongoDb();
 
 
 
-app.use(express.json())
 const corsOptions = {
-    origin: ['http://localhost:3000', 'http://127.0.0.1:3000'], // Allow localhost
+    origin: [
+            'http://127.0.0.1:3000',
+            'http://localhost:3000',
+            'http://127.0.0.1:5000',
+            'http://localhost:5000',
+            'https://bangaram-project.vercel.app',
+            'https://bangaram-project-saikrishna488s-projects.vercel.app',
+            'https://bangaram-project-git-main-saikrishna488s-projects.vercel.app',  
+    ],
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type', 'Authorization']
-  };
+};
   
 app.use(cors(corsOptions)); // Apply CORS with allowed origins
 app.use(domainWhitelistMiddleware)
+app.use(express.json())
 
 
 
@@ -44,5 +52,5 @@ app.use('/leaderboard', leaderboard)
 
 
 app.listen(port,()=>{
-    console.log("Server is live on http://127.0.0.1:"+port);
+    console.log("Server is live on port :"+port);
 })

@@ -6,6 +6,8 @@ import { toast } from 'react-toastify';
 import { TonConnectButton, useTonAddress } from '@tonconnect/ui-react'; // Import TonConnectButton and useTonAddress
 import Navbar from './Navbar'; // Import Navbar component
 import axios from 'axios'; // For API calls
+import { FaWallet } from 'react-icons/fa'; // Wallet icon
+import { AiOutlineDisconnect } from 'react-icons/ai'; // Disconnect icon
 
 const WalletPage = () => {
   const { user, setUser } = useContext(globalContext); // Get user data from context
@@ -46,25 +48,36 @@ const WalletPage = () => {
     }
   };
 
-  if (!user && !user.username) {
+  if (!user || !user.username) {
     return <div className="flex items-center justify-center h-screen text-white">Loading...</div>;
   }
 
   return (
-    <div className="dark:bg-gray-900 bg-gray-800 min-h-screen p-6">
-      <h1 className="text-3xl font-bold text-center mb-8 text-white">Wallet</h1>
-      <div className="max-w-lg mx-auto bg-gray-700 dark:bg-gray-800 p-6 rounded-lg shadow-lg">
-        <div className="mb-6 text-center">
-          <p className="text-lg font-semibold text-gray-200">Your Wallet Address:</p>
-          <p className="text-md text-gray-300">{walletAddress || 'Not connected'}</p>
-        </div>
-        <div className="mb-6 flex justify-center"> {/* Align the button to center */}
-          <TonConnectButton
-            className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold px-4 py-2 rounded-lg hover:from-blue-600 hover:to-indigo-700 transition duration-300 ease-in-out shadow-lg transform hover:scale-105"
-          />
-        </div>
-      </div>
+    <div className="dark:bg-gradient-to-b from-gray-900 via-gray-800 to-black bg-gradient-to-b from-gray-900 via-gray-800 to-black min-h-screen flex flex-col">
       <Navbar />
+      <main className="flex-grow flex items-center justify-center p-4 sm:p-6 md:p-8">
+        <div className="bg-black bg-opacity-70 p-6 sm:p-8 rounded-lg shadow-lg max-w-md w-full flex flex-col">
+          <h1 className="text-2xl sm:text-3xl font-bold text-center text-white mb-4">
+            Wallet
+          </h1>
+          <div className="flex flex-col items-center mb-6">
+            <FaWallet className="text-yellow-400 text-3xl mb-2" />
+            <div className="text-center flex flex-col w-full">
+              <p className="text-lg font-semibold text-gray-300">Your Wallet Address:</p>
+              <p className="text-base text-gray-400 mt-2 break-words w-full">{walletAddress || 'Not connected'}</p>
+            </div>
+          </div>
+          <div className="mt-4 flex justify-center">
+            <TonConnectButton>
+              <AiOutlineDisconnect className="text-white text-lg mr-2" />
+              Connect Wallet
+            </TonConnectButton>
+          </div>
+          <div className="mt-6 text-center text-gray-400">
+            <p className="text-sm">More options coming soon...</p>
+          </div>
+        </div>
+      </main>
     </div>
   );
 };
