@@ -19,23 +19,23 @@ const Home = () => {
         return {
           telegramUsername: 'captain488',
           telegram_id: '74547451578',
-          start : ''
+          start: ''
         };
       }
 
       if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe) {
         const telegramUsername = window.Telegram.WebApp.initDataUnsafe.user.username;
         const telegram_id = window.Telegram.WebApp.initDataUnsafe.user.id;
-        const queryParams = window.Telegram.WebApp.getQueryParams();
-        const start = queryParams.start;
-        return { telegramUsername, telegram_id , start};
+        const urlParams = new URLSearchParams(window.location.search);
+        const start = urlParams.get('start');
+        return { telegramUsername, telegram_id, start };
       }
 
       return null;
     };
 
     const fetchUser = async () => {
-      const { telegramUsername, telegram_id ,start } = getTelegramUsername();
+      const { telegramUsername, telegram_id, start } = getTelegramUsername();
 
       if (telegramUsername) {
         setUsername(telegramUsername);
@@ -62,10 +62,10 @@ const Home = () => {
       setLoading(false);
     };
 
-    if(!username){
+    if (!username) {
       fetchUser();
     }
-    
+
   }, []);
 
   const handleClaimReward = async () => {
