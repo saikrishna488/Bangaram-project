@@ -5,12 +5,12 @@ import { globalContext } from '../../contextapi/GlobalContext'; // Context file
 import { FaUserCircle } from 'react-icons/fa';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { useSearchParams } from 'next/navigation';
 
 const Home = () => {
   const { user, setUser } = useContext(globalContext);
   const [loading, setLoading] = useState(true);
   const [rewardClaimed, setRewardClaimed] = useState(false);
+  const [photoUrl, setPhotoUrl] = useState("");
   const [username, setUsername] = useState(null);
 
   useEffect(() => {
@@ -19,25 +19,28 @@ const Home = () => {
         return {
           telegramUsername: 'captain488',
           telegram_id: '74547451578',
-          start: ''
+          start: '',
+          photo_url: 'https://example.com/photo.jpg' // Sample photo URL for development
         };
       }
 
       if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe) {
         const telegramUsername = window.Telegram.WebApp.initDataUnsafe.user.username;
         const telegram_id = window.Telegram.WebApp.initDataUnsafe.user.id;
-        const start = window.Telegram.WebApp.initDataUnsafe.start_param
-        return { telegramUsername, telegram_id, start };
+        const start = window.Telegram.WebApp.initDataUnsafe.start_param;
+        const photo_url = window.Telegram.WebApp.initDataUnsafe.user.photo_url;
+        return { telegramUsername, telegram_id, start, photo_url };
       }
 
       return null;
     };
 
     const fetchUser = async () => {
-      const { telegramUsername, telegram_id, start } = getTelegramUsername();
+      const { telegramUsername, telegram_id, start, photo_url } = getTelegramUsername();
 
       if (telegramUsername) {
         setUsername(telegramUsername);
+        setPhotoUrl(photo_url);
 
         try {
           const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user`, {
@@ -65,7 +68,7 @@ const Home = () => {
       fetchUser();
     }
 
-  }, []);
+  }, [username]);
 
   const handleClaimReward = async () => {
     try {
@@ -78,16 +81,13 @@ const Home = () => {
         setUser(res.data.user);
         setRewardClaimed(true);
         toast.success('Reward claimed');
-      }
-      else {
+      } else {
         if (res.data.remainingTime) {
           toast.success("Come back in " + res.data.remainingTime);
-        }
-        else {
+        } else {
           toast.error("Failed to claim tokens");
         }
       }
-
 
     } catch (error) {
       console.error("Error claiming reward:", error);
@@ -109,7 +109,18 @@ const Home = () => {
       {/* User Profile Card */}
       <div className="bg-black bg-opacity-90 p-4 md:p-6 lg:p-8 rounded-lg shadow-md w-full max-w-sm md:max-w-md lg:max-w-lg text-center border border-gray-800 mb-8">
         <div className="flex flex-col items-center mb-4">
-          <FaUserCircle size={60} className="text-gray-500 mb-2" />
+          {
+            photoUrl ? (
+              <img
+                src={photoUrl}
+                alt="User"
+                className="w-24 h-24 rounded-full object-cover border-2 border-gray-700"
+              />
+            ) : (
+              <FaUserCircle size={60} className="text-gray-500 mb-2" />
+            )
+          }
+          
           <h1 className="text-xl md:text-2xl lg:text-3xl font-semibold mb-1">{user.username}</h1>
         </div>
         <div className="bg-gray-800 p-3 rounded-lg shadow-lg flex items-center justify-center">

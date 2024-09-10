@@ -82,7 +82,7 @@ const FriendsPage = () => {
                     <FaUserFriends className="text-yellow-400" /> {/* Friends icon */}
                     <span className="text-base sm:text-lg font-semibold text-gray-200">{friend}</span>
                   </div>
-                  <span className="text-base sm:text-lg font-semibold text-yellow-400"> +10</span>
+                  <span className="text-base sm:text-lg font-semibold text-yellow-400"> +20</span>
                 </li>
               ))}
             </ul>
