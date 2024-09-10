@@ -9,32 +9,32 @@ const FriendsPage = () => {
   const { user } = useContext(globalContext); // Get user data from context
 
   const copyReferralLink = () => {
-    const referralLink = `https://t.me/bgrmbot/bangaram?start=${user.referral_num}`;
+    const referralLink = `https://t.me/bgrmbot/bangaram?startapp=${user.referral_num}`;
     navigator.clipboard.writeText(referralLink)
       .then(() => toast.success('Referral link copied to clipboard!'))
       .catch(err => toast.error('Failed to copy referral link'));
   };
 
   const shareReferralLink = () => {
-    const referralLink = `https://t.me/bgrmbot/bangaram?start=${user.referral_num}`;
-  
-    if (navigator.share) {
-      // Native sharing
-      navigator.share({
-        title: 'Join me on Bangaram!',
-        url: referralLink
-      })
-      .then(() => toast.success('Referral link shared successfully!'))
-      .catch(err => toast.error('Failed to share referral link'));
-    } else {
-      // Fallback for unsupported browsers
-      const telegramShareUrl = `https://t.me/share/url?url=${encodeURIComponent(referralLink)}&text=Join%20me%20on%20Bangaram!`;
-      
-      window.open(telegramShareUrl, '_blank');
-      toast.info('Sharing via Telegram');
-    }
+    const referralLink = `https://t.me/bgrmbot/bangaram?startapp=${user.referral_num}`;
+
+    // Detailed description for sharing
+    const description = `
+      Join me on Bangaram and start earning tokens today! 
+      Bangaram is an exciting new platform that lets you earn rewards 
+      while participating in a growing community. Don't miss out on this opportunity! 
+      Use my referral link to get started and take advantage of exclusive benefits.
+    `;
+
+    // Generate the Telegram share URL with the referral link and description
+    const telegramShareUrl = `https://t.me/share/url?url=${encodeURIComponent(referralLink)}&text=${encodeURIComponent(description)}`;
+
+    // Open Telegram share window
+    window.open(telegramShareUrl, '_blank');
+    toast.info('Sharing via Telegram');
   };
-  
+
+
   if (!user || !user.username) {
     return <div className="flex items-center justify-center h-screen text-white">Loading...</div>;
   }

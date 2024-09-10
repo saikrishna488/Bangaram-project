@@ -22,14 +22,14 @@ connectMongoDb();
 
 const corsOptions = {
     origin: [
-            'https://bangaram-project.vercel.app',
-            'https://bangaram-project-saikrishna488s-projects.vercel.app',
-            'https://bangaram-project-git-main-saikrishna488s-projects.vercel.app',  
+        'https://bangaram-project.vercel.app',
+        'https://bangaram-project-saikrishna488s-projects.vercel.app',
+        'https://bangaram-project-git-main-saikrishna488s-projects.vercel.app',
     ],
-    methods: ['GET', 'POST'],
+    methods: ['GET', 'POST', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
 };
-  
+
 app.use(cors(corsOptions)); // Apply CORS with allowed origins
 app.use(domainWhitelistMiddleware)
 app.use(express.json())
@@ -38,7 +38,7 @@ app.use(express.json())
 
 
 
-app.get('/',(req,res)=>{
+app.get('/', (req, res) => {
     res.send("Api is online");
 })
 
@@ -47,6 +47,6 @@ app.use('/tasks', taskRoutes)
 app.use('/leaderboard', leaderboard)
 
 
-app.listen(port,()=>{
-    console.log("Server is live on port :"+port);
+app.listen(port, () => {
+    console.log("Server is live on port :" + port);
 })
