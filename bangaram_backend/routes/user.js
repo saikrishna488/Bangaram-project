@@ -10,7 +10,6 @@ import jwtVerify from '../jwt/jwtVerify.js'
 
 router.post('/', jwtVerify, async (req, res) => {
     const { start, username, telegram_id } = req.body;
-    console.log(start)
 
     try {
         if (!username) {
@@ -24,12 +23,11 @@ router.post('/', jwtVerify, async (req, res) => {
 
         if (!user) {
             // User does not exist, create a new user
-            let tokens = 0;
+            let tokens = 10;
 
             if (start) {
                 // If a referral number is provided, check if it is valid
                 const referrer = await userModel.findOne({ referral_num: start });
-                console.log(referrer)
                 
 
                 if (referrer) {
@@ -51,7 +49,6 @@ router.post('/', jwtVerify, async (req, res) => {
             });
 
 
-            console.log(user)
             return res.json({
                 user,
                 msg: true
@@ -127,7 +124,7 @@ router.post('/daily-reward', jwtVerify, async (req, res) => {
             
             // Save the user data
             await user.save();
-            console.log("tokens claimed")
+            // console.log("tokens claimed")
 
             return res.json({
                 msg: true,
@@ -136,7 +133,6 @@ router.post('/daily-reward', jwtVerify, async (req, res) => {
         } else {
             // Calculate remaining time
             const remainingTime = getRemainingTime(user.last_checkin);
-            console.log(user.last_checkin)
             return res.json({
                 msg: false,
                 remainingTime

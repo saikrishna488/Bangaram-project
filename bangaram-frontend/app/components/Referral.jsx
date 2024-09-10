@@ -4,7 +4,6 @@ import React, { useContext } from 'react';
 import { globalContext } from '../../contextapi/GlobalContext'; // Context file
 import { toast } from 'react-toastify';
 import { FaShareAlt, FaCopy, FaUserFriends } from 'react-icons/fa'; // Icons for sharing, copying, and friends
-import Navbar from './Navbar';
 
 const FriendsPage = () => {
   const { user } = useContext(globalContext); // Get user data from context
@@ -41,9 +40,9 @@ const FriendsPage = () => {
   }
 
   return (
-    <div className="bg-gradient-to-r from-black to-gray-900 min-h-screen p-4 sm:p-6 lg:p-8 pb-20">
+    <div className="bg-gradient-to-r from-black to-gray-900 min-h-screen p-4 sm:p-6 lg:p-8 relative"> {/* Added relative */}
       <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-center mb-6 lg:mb-8 text-white">My Friends</h1>
-      <div className="max-w-3xl mx-auto bg-gray-800 dark:bg-gray-900 p-4 sm:p-6 rounded-lg shadow-lg">
+      <div className="max-w-3xl mx-auto bg-gray-800 dark:bg-gray-900 p-4 sm:p-6 rounded-lg shadow-lg mb-32"> {/* Added mb-32 */}
         {/* Referral Number Section */}
         <div className="mb-6 text-center">
           <h2 className="text-xl sm:text-2xl font-semibold text-white mb-2">Referral Number</h2>

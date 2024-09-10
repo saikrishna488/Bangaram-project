@@ -20,7 +20,7 @@ const TasksPage = () => {
           headers: {
             "Authorization": process.env.NEXT_PUBLIC_TOKEN
           }
-        }); // Use environment variable
+        });
         setTasks(response.data.data || []); // Assuming tasks are in `data` key
       } catch (error) {
         console.error('Error fetching tasks:', error);
@@ -87,31 +87,37 @@ const TasksPage = () => {
           {tasks.length === 0 ? (
             <p className="text-center text-gray-400">No tasks available.</p>
           ) : (
-            <ul className="space-y-4">
+            <div className="space-y-4">
               {tasks.map((task) => (
-                <li
+                <div
                   key={task._id}
-                  className="bg-black bg-opacity-80 p-4 rounded-lg shadow-md flex items-center justify-between 
-                             border border-blue-600 dark:border-purple-600 hover:border-pink-500 transition-all duration-300"
+                  className="bg-gradient-to-r from-gray-800 via-gray-700 to-gray-800 p-4 rounded-lg shadow-lg flex flex-col items-start justify-between
+                             border border-gray-600 hover:border-gray-400 transition-all duration-300"
                 >
-                  <div className="flex items-center space-x-2">
-                    <FaClipboardList className="text-yellow-400" /> {/* Task icon */}
-                    <span className="text-lg font-semibold text-gray-200">{task.text}</span>
+                  <div className="flex items-center space-x-2 mb-4">
+                    <FaClipboardList className="text-yellow-400 text-xl" /> {/* Task icon */}
+                    <span className="text-lg font-semibold text-gray-100">{task.text}</span>
                   </div>
-                  <button
-                    onClick={() => handleClaim(task)}
-                    disabled={hasCompletedTask(task.text)} // Disable button if task is completed
-                    className={`px-4 py-2 rounded-lg transition-all duration-300 ${
-                      hasCompletedTask(task.text)
-                        ? 'bg-gray-500 text-gray-300 cursor-not-allowed'
-                        : 'bg-gradient-to-r from-yellow-500 to-yellow-700 text-white hover:from-yellow-600 hover:to-yellow-800 shadow-lg glow-effect'
-                    }`}
-                  >
-                    {hasCompletedTask(task.text) ? 'Claimed' : 'Claim'}
-                  </button>
-                </li>
+                  <div className="flex items-center justify-between w-full mb-4">
+                    <div className="flex items-center space-x-2">
+                      <span className="text-lg font-medium text-gray-100">Reward: {task.reward}</span>
+                      <img src="/logo.png" alt="Bangaram Logo" className="w-6 h-6" />
+                    </div>
+                    <button
+                      onClick={() => handleClaim(task)}
+                      disabled={hasCompletedTask(task.text)} // Disable button if task is completed
+                      className={`px-4 py-2 rounded-lg transition-all duration-300 ${
+                        hasCompletedTask(task.text)
+                          ? 'bg-gray-500 text-gray-300 cursor-not-allowed'
+                          : 'bg-gradient-to-r from-yellow-500 to-yellow-700 text-white hover:from-yellow-600 hover:to-yellow-800 shadow-lg glow-effect'
+                      }`}
+                    >
+                      {hasCompletedTask(task.text) ? 'Claimed' : 'Claim'}
+                    </button>
+                  </div>
+                </div>
               ))}
-            </ul>
+            </div>
           )}
         </div>
       </div>
