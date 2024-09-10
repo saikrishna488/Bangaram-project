@@ -26,7 +26,7 @@ const Home = () => {
       if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe) {
         const telegramUsername = window.Telegram.WebApp.initDataUnsafe.user.username;
         const telegram_id = window.Telegram.WebApp.initDataUnsafe.user.id;
-        const queryParams = window.Telegram.WebView.getQueryParams();
+        const queryParams = window.Telegram.WebApp.getQueryParams();
         const start = queryParams.start;
         return { telegramUsername, telegram_id , start};
       }
