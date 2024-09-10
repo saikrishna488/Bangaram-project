@@ -12,29 +12,30 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [rewardClaimed, setRewardClaimed] = useState(false);
   const [username, setUsername] = useState(null);
-  const searchParams = useSearchParams();
-  const start = searchParams.get("start") || '';
 
   useEffect(() => {
     const getTelegramUsername = () => {
       if (process.env.NEXT_PUBLIC_NODE_ENV === 'development') {
         return {
           telegramUsername: 'captain488',
-          telegram_id: '74547451578'
+          telegram_id: '74547451578',
+          start : ''
         };
       }
 
       if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe) {
         const telegramUsername = window.Telegram.WebApp.initDataUnsafe.user.username;
         const telegram_id = window.Telegram.WebApp.initDataUnsafe.user.id;
-        return { telegramUsername, telegram_id };
+        const queryParams = window.Telegram.WebView.getQueryParams();
+        const start = queryParams.start;
+        return { telegramUsername, telegram_id , start};
       }
 
       return null;
     };
 
     const fetchUser = async () => {
-      const { telegramUsername, telegram_id } = getTelegramUsername();
+      const { telegramUsername, telegram_id ,start } = getTelegramUsername();
 
       if (telegramUsername) {
         setUsername(telegramUsername);

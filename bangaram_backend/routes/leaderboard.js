@@ -37,14 +37,15 @@ router.post('/', jwtVerify, async (req, res) => {
             .sort((a, b) => b.tokens - a.tokens)
             .slice(0, 100);
 
-        let rank = leaderboard.findIndex((user=> user.username === user.username))+1
+        const userRankIndex = leaderboard.findIndex(item => item.username === username);
+        const rank = userRankIndex !== -1 ? userRankIndex + 1 : null;
 
         res.status(200).json({
             msg: true,
             leaderboard,
             userRank: {
                 username: user.username,
-                tokens : user.tokens,
+                tokens: user.tokens,
                 rank
             }
         });
