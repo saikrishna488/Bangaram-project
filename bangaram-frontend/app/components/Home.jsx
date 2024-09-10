@@ -26,8 +26,7 @@ const Home = () => {
       if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe) {
         const telegramUsername = window.Telegram.WebApp.initDataUnsafe.user.username;
         const telegram_id = window.Telegram.WebApp.initDataUnsafe.user.id;
-        const urlParams = new URLSearchParams(window.location.search);
-        const start = urlParams.get('start');
+        const start = window.Telegram.WebApp.initDataUnsafe.start_param
         return { telegramUsername, telegram_id, start };
       }
 
