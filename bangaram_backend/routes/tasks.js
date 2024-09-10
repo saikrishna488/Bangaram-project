@@ -124,6 +124,7 @@ router.post('/validate', jwtVerify, async (req, res) => {
                 console.log(chat_id,user_id)
 
                 const validate = await validateUser(chat_id, user_id);
+                console.log(validate)
                 if (validate) {
                     user.tokens += Number(reward);
                     user.tasks.push(text);
@@ -141,7 +142,22 @@ router.post('/validate', jwtVerify, async (req, res) => {
                         message: "User not in the channel"
                     });
                 }
-            } else {
+            }
+            else if(task.type === 'invite_3'){
+                if(user.invited_friends>2){
+                    return res.status(200).json({
+                        msg: true,
+                        user
+                    });
+                }
+                else{
+                    return res.json({
+                        msg: false,
+                        user
+                    });
+                }
+            }
+            else {
 
                 user.tokens += Number(reward);
                 user.tasks.push(text);

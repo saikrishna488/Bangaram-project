@@ -60,7 +60,7 @@ const TasksPage = () => {
           setClaimedTasks(prev => new Set(prev).add(task.text)); // Update claimed tasks
           setUser(res.data.user);
         } else {
-          toast.error('Already claimed');
+          toast.error('Complete the task');
         }
 
       } catch (error) {
