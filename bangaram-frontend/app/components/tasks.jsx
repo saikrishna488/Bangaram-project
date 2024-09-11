@@ -4,7 +4,8 @@ import React, { useState, useEffect, useContext } from 'react';
 import { globalContext } from '../../contextapi/GlobalContext'; // Context file
 import axios from 'axios'; // For API calls
 import { toast } from 'react-toastify';
-import { FiList } from 'react-icons/fi'; // Import new white task icon
+import { FiList } from 'react-icons/fi'; 
+import { BeatLoader } from 'react-spinners';// Import new white task icon
 
 const TasksPage = () => {
   const [tasks, setTasks] = useState([]);
@@ -80,8 +81,18 @@ const TasksPage = () => {
     return new Intl.NumberFormat().format(num);
   };
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+      <BeatLoader color="#ffffff" size={15} />
+    </div>
+    );
+  }
+
+
   if (!user || !user.username || loading) {
-    return <div className="flex items-center justify-center h-screen text-white">Loading...</div>;
+    setLoading(true)
+    return null
   }
 
   const incompleteTasks = tasks.filter(task => !hasCompletedTask(task.text));

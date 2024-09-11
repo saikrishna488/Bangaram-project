@@ -6,6 +6,7 @@ import { FaUserCircle } from 'react-icons/fa';
 import DailyRewardCard from './DailyRewardCard';
 import EarnCard from './EarnCard';
 import WalletButton from './WalletButton';
+import { BeatLoader } from 'react-spinners';
 
 const Home = () => {
   const { user, setUser } = useContext(globalContext);
@@ -72,7 +73,11 @@ const Home = () => {
   }, [username]);
 
   if (loading) {
-    return <div className="flex items-center justify-center h-screen text-white">Loading...</div>;
+    return (
+      <div className="flex items-center justify-center h-screen">
+      <BeatLoader color="#ffffff" size={15} />
+    </div>
+    );
   }
 
   if (!user || !user.username) {

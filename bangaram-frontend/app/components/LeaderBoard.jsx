@@ -4,6 +4,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { globalContext } from '@/contextapi/GlobalContext';
+import { BeatLoader } from 'react-spinners';
 
 const LeaderBoard = () => {
     const [leaderboard, setLeaderBoard] = useState([]);
@@ -48,11 +49,16 @@ const LeaderBoard = () => {
     };
 
     if (!user?.username) {
-        return <div className="flex items-center justify-center h-screen text-white">Loading...</div>;
+        setLoading(true);
+        return null;
     }
 
     if (loading) {
-        return <div className="flex items-center justify-center h-screen text-white">Loading...</div>;
+        return (
+            <div className="flex items-center justify-center h-screen">
+                <BeatLoader color="#ffffff" size={15} />
+            </div>
+        );
     }
 
     return (
@@ -69,7 +75,7 @@ const LeaderBoard = () => {
                                     <p className="font-medium mr-2">{userRank.rank}. {userRank.username}</p>
                                 </div>
                                 <div className="flex items-center">
-                                    <p className="mr-2">{formatTokens(userRank.tokens)}</p>
+                                    <p className="mr-2 text-sm sm:text-base">{formatTokens(userRank.tokens)}</p>
                                     <img src="logo.png" alt="Bangaram Logo" className="w-5 h-5" />
                                 </div>
                             </div>
@@ -86,7 +92,7 @@ const LeaderBoard = () => {
                                 <p className="text-lg font-medium">{index + 1}. {user.username}</p>
                             </div>
                             <div className="flex items-center">
-                                <p className="mr-2 text-xl font-bold">{formatTokens(user.tokens)}</p>
+                                <p className="mr-2 text-sm sm:text-base font-bold">{formatTokens(user.tokens)}</p>
                                 <img src="logo.png" alt="Bangaram Logo" className="w-6 h-6" />
                             </div>
                         </div>
