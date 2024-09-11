@@ -53,7 +53,7 @@ const LeaderBoard = () => {
     };
 
     if (!user?.username) {
-        return null
+        return null;
     }
 
     if (loading) {
@@ -75,7 +75,7 @@ const LeaderBoard = () => {
                         <div className="p-4 bg-black rounded-lg">
                             <div className="flex items-center justify-between text-sm sm:text-lg">
                                 <div className="flex items-center">
-                                    <p className="font-medium mr-2">{userRank.rank}. {userRank.username}</p>
+                                    <p className="font-medium text-sm sm:text-base mr-2">{userRank.rank}. {userRank.username}</p>
                                 </div>
                                 <div className="flex items-center">
                                     <p className="mr-2 text-sm sm:text-base">{formatTokens(userRank.tokens)}</p>
@@ -92,7 +92,7 @@ const LeaderBoard = () => {
                     {leaderboard.length ? leaderboard.map((user, index) => (
                         <div key={index} className="bg-black border border-gray-700 rounded-lg flex items-center p-4 shadow-md">
                             <div className="flex-1">
-                                <p className="text-lg font-medium">{index + 1}. {user.username}</p>
+                                <p className="text-sm sm:text-base font-medium">{index + 1}. {user.username}</p> {/* Reduced font size */}
                             </div>
                             <div className="flex items-center">
                                 <p className="mr-2 text-sm sm:text-base font-bold">{formatTokens(user.tokens)}</p>
