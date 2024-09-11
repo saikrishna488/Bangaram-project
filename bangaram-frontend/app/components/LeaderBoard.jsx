@@ -13,6 +13,10 @@ const LeaderBoard = () => {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
+
+        if (!user?.username) {
+            setLoading(true);
+        }
         const fetchUsers = async () => {
             setLoading(true);
             try {
@@ -49,8 +53,7 @@ const LeaderBoard = () => {
     };
 
     if (!user?.username) {
-        setLoading(true);
-        return null;
+        return null
     }
 
     if (loading) {
