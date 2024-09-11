@@ -98,7 +98,8 @@ const Home = () => {
   };
 
   const handleGoToEarn = () => {
-    router.push('/earn'); // Redirect to the "Earn" page
+    toast.info("Coming Soon..")
+    // router.push('/earn'); // Redirect to the "Earn" page
   };
 
   // Format the token balance with commas
