@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 const Navbar = () => {
   return (
-    <nav className="fixed bottom-0 w-full bg-gradient-to-r from-black to-gray-900 p-4 flex justify-around items-center text-white space-x-4 sm:space-x-8">
+    <nav className="fixed bottom-0 w-full bg-black p-4 flex justify-around items-center text-white space-x-4 sm:space-x-8">
       <Link href="/" passHref>
         <div className="flex flex-col items-center cursor-pointer text-center">
           <FaHome className="text-2xl mb-1 sm:text-3xl" />

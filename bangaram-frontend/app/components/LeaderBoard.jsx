@@ -36,12 +36,16 @@ const LeaderBoard = () => {
                 toast.error("Error occurred while fetching leaderboard.");
             }
             setLoading(false);
-        }; 
+        };
 
         if (user?.username) {
             fetchUsers();
         }
     }, [user?.username]);
+
+    const formatTokens = (tokens) => {
+        return new Intl.NumberFormat().format(tokens);
+    };
 
     if (!user?.username) {
         return <div className="flex items-center justify-center h-screen text-white">Loading...</div>;
@@ -52,20 +56,20 @@ const LeaderBoard = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white py-10 px-4 sm:px-6 lg:px-8 pb-20">
+        <div className="min-h-screen bg-black text-white py-10 px-4 sm:px-6 lg:px-8 pb-20">
             <div className="max-w-4xl mx-auto">
 
                 {/* User Rank Section */}
                 {userRank && (
-                    <div className="bg-gray-900 shadow-lg rounded-lg p-6 mb-8">
+                    <div className="bg-black border border-gray-700 shadow-lg rounded-lg p-6 mb-8">
                         <h4 className="text-2xl font-semibold mb-4 text-base sm:text-xl">Your Rank</h4>
-                        <div className="p-4 bg-gray-800 rounded-lg">
+                        <div className="p-4 bg-black rounded-lg">
                             <div className="flex items-center justify-between text-sm sm:text-lg">
                                 <div className="flex items-center">
                                     <p className="font-medium mr-2">{userRank.rank}. {userRank.username}</p>
                                 </div>
                                 <div className="flex items-center">
-                                    <p className="mr-2">{userRank.tokens}</p>
+                                    <p className="mr-2">{formatTokens(userRank.tokens)}</p>
                                     <img src="logo.png" alt="Bangaram Logo" className="w-5 h-5" />
                                 </div>
                             </div>
@@ -77,12 +81,12 @@ const LeaderBoard = () => {
                 <h2 className="text-3xl font-bold text-center mb-8 text-xl sm:text-3xl">Leaderboard</h2>
                 <div className="space-y-4">
                     {leaderboard.length ? leaderboard.map((user, index) => (
-                        <div key={index} className="bg-gray-900 border border-gray-700 rounded-lg flex items-center p-4 shadow-md">
+                        <div key={index} className="bg-black border border-gray-700 rounded-lg flex items-center p-4 shadow-md">
                             <div className="flex-1">
                                 <p className="text-lg font-medium">{index + 1}. {user.username}</p>
                             </div>
                             <div className="flex items-center">
-                                <p className="mr-2 text-xl font-bold">{user.tokens}</p>
+                                <p className="mr-2 text-xl font-bold">{formatTokens(user.tokens)}</p>
                                 <img src="logo.png" alt="Bangaram Logo" className="w-6 h-6" />
                             </div>
                         </div>

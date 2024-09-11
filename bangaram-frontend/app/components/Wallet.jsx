@@ -53,10 +53,10 @@ const WalletPage = () => {
   }
 
   return (
-    <div className="dark:bg-gradient-to-b from-gray-900 via-gray-800 to-black bg-gradient-to-b from-gray-900 via-gray-800 to-black min-h-screen flex flex-col">
+    <div className="bg-black min-h-screen flex flex-col relative pb-20">
       <Navbar />
       <main className="flex-grow flex items-center justify-center p-4 sm:p-6 md:p-8">
-        <div className="bg-black bg-opacity-70 p-6 sm:p-8 rounded-lg shadow-lg max-w-md w-full flex flex-col">
+        <div className="bg-black p-6 sm:p-8 rounded-lg shadow-lg border border-gray-700 max-w-md w-full flex flex-col">
           <h1 className="text-2xl sm:text-3xl font-bold text-center text-white mb-4">
             Wallet
           </h1>

@@ -4,7 +4,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { globalContext } from '../../contextapi/GlobalContext'; // Context file
 import axios from 'axios'; // For API calls
 import { toast } from 'react-toastify';
-import { FaClipboardList } from 'react-icons/fa'; // Import clipboard list icon
+import { FiList } from 'react-icons/fi'; // Import new white task icon
 
 const TasksPage = () => {
   const [tasks, setTasks] = useState([]);
@@ -81,7 +81,7 @@ const TasksPage = () => {
   }
 
   return (
-    <div className="bg-gradient-to-r from-black to-gray-900 min-h-screen p-6 pb-24">
+    <div className="bg-black min-h-screen p-6 pb-24">
       <h1 className="text-3xl font-bold text-center mb-8 text-white">Tasks</h1>
       <div className="max-w-4xl mx-auto">
         <div>
@@ -93,14 +93,14 @@ const TasksPage = () => {
               {tasks.map((task) => (
                 <div
                   key={task._id}
-                  className="bg-gradient-to-r from-gray-800 via-gray-700 to-gray-800 p-4 rounded-lg shadow-lg flex flex-col items-start justify-between
-                             border border-gray-600 hover:border-gray-400 transition-all duration-300"
+                  className="bg-black border border-gray-700 rounded-lg p-4 shadow-lg flex flex-col items-start justify-between
+                             hover:border-gray-500 transition-all duration-300"
                 >
-                  <div className="flex items-center space-x-2 mb-4">
-                    <FaClipboardList className="text-yellow-400 text-xl" /> {/* Task icon */}
+                  <div className="flex items-center space-x-2">
+                    <FiList className="text-white text-xl" /> {/* New white task icon */}
                     <span className="text-lg font-semibold text-gray-100">{task.text}</span>
                   </div>
-                  <div className="flex items-center justify-between w-full mb-4">
+                  <div className="flex items-center justify-between w-full mt-4">
                     <div className="flex items-center space-x-2">
                       <span className="text-lg font-medium text-gray-100">Reward: {task.reward}</span>
                       <img src="/logo.png" alt="Bangaram Logo" className="w-6 h-6" />
@@ -111,7 +111,7 @@ const TasksPage = () => {
                       className={`px-4 py-2 rounded-lg transition-all duration-300 ${
                         hasCompletedTask(task.text)
                           ? 'bg-gray-500 text-gray-300 cursor-not-allowed'
-                          : 'bg-gradient-to-r from-yellow-500 to-yellow-700 text-white hover:from-yellow-600 hover:to-yellow-800 shadow-lg glow-effect'
+                          : 'bg-white text-black hover:bg-gray-200 shadow-lg'
                       }`}
                     >
                       {hasCompletedTask(task.text) ? 'Claimed' : 'Claim'}

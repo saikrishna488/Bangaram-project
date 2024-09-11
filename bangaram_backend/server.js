@@ -22,6 +22,7 @@ connectMongoDb();
 
 const corsOptions = {
     origin: [
+        'http://localhost:3000',
         'https://bangaram-project.vercel.app',
         'https://bangaram-project-saikrishna488s-projects.vercel.app',
         'https://bangaram-project-git-main-saikrishna488s-projects.vercel.app',

@@ -29,8 +29,7 @@ const FriendsPage = () => {
     started and take advantage of exclusive benefits. 🎉
 
     Let’s grow together and make the most out of this amazing journey! 💪
-`;
-
+    `;
 
     // Generate the Telegram share URL with the referral link and description
     const telegramShareUrl = `https://t.me/share/url?url=${encodeURIComponent(referralLink)}&text=${encodeURIComponent(description)}`;
@@ -40,15 +39,14 @@ const FriendsPage = () => {
     toast.info('Sharing via Telegram');
   };
 
-
   if (!user || !user.username) {
     return <div className="flex items-center justify-center h-screen text-white">Loading...</div>;
   }
 
   return (
-    <div className="bg-gradient-to-r from-black to-gray-900 min-h-screen p-4 sm:p-6 lg:p-8 relative"> {/* Added relative */}
+    <div className="bg-black min-h-screen p-4 sm:p-6 lg:p-8 relative">
       <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-center mb-6 lg:mb-8 text-white">My Friends</h1>
-      <div className="max-w-3xl mx-auto bg-gray-800 dark:bg-gray-900 p-4 sm:p-6 rounded-lg shadow-lg mb-32"> {/* Added mb-32 */}
+      <div className="max-w-3xl mx-auto bg-black p-4 sm:p-6 rounded-lg shadow-lg mb-32">
         {/* Referral Number Section */}
         <div className="mb-6 text-center">
           <h2 className="text-xl sm:text-2xl font-semibold text-white mb-2">Referral Number</h2>
@@ -59,14 +57,14 @@ const FriendsPage = () => {
           <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
             <button
               onClick={copyReferralLink}
-              className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 flex items-center space-x-2"
+              className="bg-white text-black px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-100 flex items-center space-x-2"
             >
               <FaCopy />
               <span className="text-sm sm:text-base">Copy Link</span>
             </button>
             <button
               onClick={shareReferralLink}
-              className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 flex items-center space-x-2"
+              className="bg-white text-black px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-100 flex items-center space-x-2"
             >
               <FaShareAlt />
               <span className="text-sm sm:text-base">Share Link</span>
@@ -82,10 +80,10 @@ const FriendsPage = () => {
               {user.invited_friends.map((friend, index) => (
                 <li
                   key={index}
-                  className="bg-gray-700 dark:bg-gray-800 p-4 rounded-lg shadow-md flex items-center justify-between border border-blue-600 dark:border-purple-600 hover:border-pink-500 transition-all duration-300"
+                  className="bg-black p-4 rounded-lg shadow-md flex items-center justify-between border border-blue-600 hover:border-pink-500 transition-all duration-300"
                 >
                   <div className="flex items-center space-x-2">
-                    <FaUserFriends className="text-yellow-400" /> {/* Friends icon */}
+                    <FaUserFriends className="text-white" /> {/* Friends icon */}
                     <span className="text-base sm:text-lg font-semibold text-gray-200">{friend}</span>
                   </div>
                   <span className="text-base sm:text-lg font-semibold text-yellow-400"> +20</span>
