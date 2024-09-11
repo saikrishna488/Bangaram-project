@@ -143,8 +143,55 @@ router.post('/validate', jwtVerify, async (req, res) => {
                     });
                 }
             }
-            else if(task.type === 'invite_3'){
-                if(user.invited_friends>2){
+            else if(task.type === 'invite'){
+
+                if(user.invited_friends.length>2 && user.invited_friends.length<4){
+
+                    user.tokens += Number(reward);
+                    user.tasks.push(text);
+
+                    // Save the updated user
+                    await user.save();
+
+                    return res.status(200).json({
+                        msg: true,
+                        user
+                    });
+                }
+                else if(user.invited_friends.length>3 && user.invited_friends.length<6){
+
+                    user.tokens += Number(reward);
+                    user.tasks.push(text);
+
+                    // Save the updated user
+                    await user.save();
+
+                    return res.status(200).json({
+                        msg: true,
+                        user
+                    });
+                }
+                else if(user.invited_friends.length>14 && user.invited_friends.length<18){
+
+                    user.tokens += Number(reward);
+                    user.tasks.push(text);
+
+                    // Save the updated user
+                    await user.save();
+
+                    return res.status(200).json({
+                        msg: true,
+                        user
+                    });
+                }
+                else if(user.invited_friends.length>29 && user.invited_friends.length<34){
+
+                    user.tokens += Number(reward);
+                    user.tasks.push(text);
+
+                    // Save the updated user
+                    await user.save();
+
                     return res.status(200).json({
                         msg: true,
                         user
