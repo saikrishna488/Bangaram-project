@@ -23,14 +23,7 @@ const Navbar = () => {
           <FaUsers className="text-2xl mb-1 sm:text-3xl" />
           <span className="text-xs sm:text-sm">Friends</span>
         </div>
-      </Link>
-      
-      <Link href="/wallet" passHref>
-        <div className="flex flex-col items-center cursor-pointer text-center">
-          <FaWallet className="text-2xl mb-1 sm:text-3xl" />
-          <span className="text-xs sm:text-sm">Wallet</span>
-        </div>
-      </Link>
+      </Link>   
       
       <Link href="/leaderboard" passHref>
         <div className="flex flex-col items-center cursor-pointer text-center">

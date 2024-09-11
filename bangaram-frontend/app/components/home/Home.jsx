@@ -1,11 +1,11 @@
 "use client";
-
 import React, { useContext, useEffect, useState } from 'react';
-import { globalContext } from '../../contextapi/GlobalContext'; // Context file
-import { FaUserCircle } from 'react-icons/fa';
-import { useRouter } from 'next/navigation';
+import { globalContext } from '../../../contextapi/GlobalContext'; // Context file
 import axios from 'axios';
-import { toast } from 'react-toastify';
+import { FaUserCircle } from 'react-icons/fa';
+import DailyRewardCard from './DailyRewardCard';
+import EarnCard from './EarnCard';
+import WalletButton from './WalletButton';
 
 const Home = () => {
   const { user, setUser } = useContext(globalContext);
@@ -13,7 +13,6 @@ const Home = () => {
   const [rewardClaimed, setRewardClaimed] = useState(false);
   const [photoUrl, setPhotoUrl] = useState("");
   const [username, setUsername] = useState(null);
-  const router = useRouter();
 
   useEffect(() => {
     const getTelegramUsername = () => {
@@ -72,41 +71,6 @@ const Home = () => {
 
   }, [username]);
 
-  const handleClaimReward = async () => {
-    try {
-      const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/daily-reward`, { username }, {
-        headers: {
-          "Authorization": process.env.NEXT_PUBLIC_TOKEN
-        }
-      });
-      if (res.data.msg) {
-        setUser(res.data.user);
-        setRewardClaimed(true);
-        toast.success('Reward claimed');
-      } else {
-        if (res.data.remainingTime) {
-          toast.success("Come back in " + res.data.remainingTime);
-        } else {
-          toast.error("Failed to claim tokens");
-        }
-      }
-
-    } catch (error) {
-      console.error("Error claiming reward:", error);
-      toast.error("Error occurred");
-    }
-  };
-
-  const handleGoToEarn = () => {
-    toast.info("Coming Soon..")
-    // router.push('/earn'); // Redirect to the "Earn" page
-  };
-
-  // Format the token balance with commas
-  const formatTokens = (tokens) => {
-    return tokens.toLocaleString();
-  };
-
   if (loading) {
     return <div className="flex items-center justify-center h-screen text-white">Loading...</div>;
   }
@@ -140,37 +104,25 @@ const Home = () => {
             height={30}
             className="mr-2"
           />
-          <span className="text-lg md:text-xl font-semibold">{formatTokens(user.tokens)}</span>
+          <span className="text-lg md:text-xl font-semibold">{user.tokens.toLocaleString()}</span>
         </div>
       </div>
 
       {/* Actions Section */}
-      <div className="flex space-x-4 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-900">
-        {/* Daily Reward Card */}
-        <div className="bg-black p-4 md:p-6 lg:p-6 rounded-lg text-center min-w-[160px] flex-shrink-0 border border-gray-800">
-          <h2 className="text-lg md:text-xl lg:text-xl font-bold mb-2">Daily Reward</h2>
-          <p className="text-sm md:text-base lg:text-base mb-4">Claim your daily reward of 10 Bangaram tokens!</p>
-          <button
-            onClick={handleClaimReward}
-            className={`px-4 py-2 md:px-4 md:py-2 rounded-full font-semibold ${rewardClaimed ? 'bg-white text-black cursor-not-allowed' : 'bg-white text-black'} transition duration-300 ease-in-out`}
-            disabled={rewardClaimed}
-          >
-            {rewardClaimed ? 'Reward Claimed' : 'Claim Reward'}
-          </button>
-        </div>
-
-        {/* Earn Card */}
-        <div className="bg-black p-4 md:p-6 lg:p-6 rounded-lg text-center min-w-[160px] flex-shrink-0 border border-gray-800">
-          <h2 className="text-lg md:text-xl lg:text-xl font-bold mb-2">Earn More Bangaram</h2>
-          <p className="text-sm md:text-base lg:text-base mb-4">Participate in games and quizzes to earn more Bangaram tokens!</p>
-          <button
-            onClick={handleGoToEarn}
-            className="px-4 py-2 md:px-4 md:py-2 rounded-full font-semibold bg-white text-black transition duration-300 ease-in-out"
-          >
-            Earn Now
-          </button>
+      <div className='w-full flex justify-center relative'>
+        <div className="flex space-x-4 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-900 px-4">
+          <DailyRewardCard 
+            username={username} 
+            setUser={setUser} 
+            rewardClaimed={rewardClaimed} 
+            setRewardClaimed={setRewardClaimed} 
+          />
+          <EarnCard />
         </div>
       </div>
+
+      {/* Wallet Button */}
+      <WalletButton walletAddress={user.wallet_address} />
     </div>
   );
 };

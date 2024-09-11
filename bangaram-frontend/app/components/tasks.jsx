@@ -76,9 +76,16 @@ const TasksPage = () => {
     return user.tasks.includes(text);
   };
 
+  const formatNumber = (num) => {
+    return new Intl.NumberFormat().format(num);
+  };
+
   if (!user || !user.username || loading) {
     return <div className="flex items-center justify-center h-screen text-white">Loading...</div>;
   }
+
+  const incompleteTasks = tasks.filter(task => !hasCompletedTask(task.text));
+  const completedTasks = tasks.filter(task => hasCompletedTask(task.text));
 
   return (
     <div className="bg-black min-h-screen p-6 pb-24">
@@ -86,11 +93,11 @@ const TasksPage = () => {
       <div className="max-w-4xl mx-auto">
         <div>
           <h2 className="text-2xl font-semibold text-white mb-4">Complete Tasks</h2>
-          {tasks.length === 0 ? (
+          {incompleteTasks.length === 0 ? (
             <p className="text-center text-gray-400">No tasks available.</p>
           ) : (
             <div className="space-y-4">
-              {tasks.map((task) => (
+              {incompleteTasks.map((task) => (
                 <div
                   key={task._id}
                   className="bg-black border border-gray-700 rounded-lg p-4 shadow-lg flex flex-col items-start justify-between
@@ -102,7 +109,7 @@ const TasksPage = () => {
                   </div>
                   <div className="flex items-center justify-between w-full mt-4">
                     <div className="flex items-center space-x-2">
-                      <span className="text-lg font-medium text-gray-100">Reward: {task.reward}</span>
+                      <span className="text-lg font-medium text-gray-100">Reward: {formatNumber(task.reward)}</span>
                       <img src="/logo.png" alt="Bangaram Logo" className="w-6 h-6" />
                     </div>
                     <button
@@ -116,6 +123,33 @@ const TasksPage = () => {
                     >
                       {hasCompletedTask(task.text) ? 'Claimed' : 'Claim'}
                     </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="mt-8">
+          <h2 className="text-2xl font-semibold text-white mb-4">Completed Tasks</h2>
+          {completedTasks.length === 0 ? (
+            <p className="text-center text-gray-400">No completed tasks.</p>
+          ) : (
+            <div className="space-y-4">
+              {completedTasks.map((task) => (
+                <div
+                  key={task._id}
+                  className="bg-black border border-gray-700 rounded-lg p-4 shadow-lg flex flex-col items-start justify-between"
+                >
+                  <div className="flex items-center space-x-2">
+                    <FiList className="text-gray-400 text-xl" /> {/* Gray task icon */}
+                    <span className="text-lg font-semibold text-gray-300">{task.text}</span>
+                  </div>
+                  <div className="flex items-center justify-between w-full mt-4">
+                    <div className="flex items-center space-x-2">
+                      <span className="text-lg font-medium text-gray-300">Reward: {formatNumber(task.reward)}</span>
+                      <img src="/logo.png" alt="Bangaram Logo" className="w-6 h-6" />
+                    </div>
                   </div>
                 </div>
               ))}
