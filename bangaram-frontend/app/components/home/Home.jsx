@@ -70,17 +70,6 @@ const Home = () => {
       fetchUser();
     }
 
-    // Set Telegram Web App theme parameters
-    if (window.Telegram && window.Telegram.WebApp) {
-      window.Telegram.WebApp.ready();
-      const themeParams = window.Telegram.WebApp.themeParams || {};
-
-      // Apply theme parameters to the app
-      document.body.style.backgroundColor = themeParams.bg_color || '#FFFFFF';
-      document.querySelector('header')?.style.setProperty('background-color', themeParams.header_bg_color || '#000000');
-      document.querySelector('header')?.style.setProperty('color', themeParams.text_color || '#000000');
-    }
-
   }, [username]);
 
   if (loading) {
