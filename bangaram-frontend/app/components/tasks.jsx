@@ -57,11 +57,14 @@ const TasksPage = () => {
             "Authorization": process.env.NEXT_PUBLIC_TOKEN
           }
         });
+        console.log(res.data)
 
         if (res.data.msg) {
           toast.success('Tokens claimed successfully!');
           setClaimedTasks(prev => new Set(prev).add(task.text)); // Update claimed tasks
           setUser(res.data.user);
+
+          
         } else {
           toast.error('Complete the task');
         }

@@ -127,7 +127,11 @@ router.post('/validate', jwtVerify, async (req, res) => {
             'invite_5': user.invited_friends.length > 4,
             'invite_15': user.invited_friends.length > 14,
             'invite_30': user.invited_friends.length > 29,
-            'wallet' : user.wallet_address.length>0
+            'wallet' : user.wallet_address.length>0,
+            'twitter' : true,
+            'free' : true,
+            'youtube' : true,
+            'collab' : true
         };
 
         if (task.type === 'join_channel') {
@@ -140,6 +144,7 @@ router.post('/validate', jwtVerify, async (req, res) => {
                 });
             }
         } else if (rewardCondition[task.type] === undefined || !rewardCondition[task.type]) {
+            console.log("debug")
             return res.json({
                 msg: false,
                 user
