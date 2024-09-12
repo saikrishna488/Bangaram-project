@@ -126,7 +126,8 @@ router.post('/validate', jwtVerify, async (req, res) => {
             'invite_3': user.invited_friends.length > 2,
             'invite_5': user.invited_friends.length > 4,
             'invite_15': user.invited_friends.length > 14,
-            'invite_30': user.invited_friends.length > 29
+            'invite_30': user.invited_friends.length > 29,
+            'wallet' : user.wallet_address.length>0
         };
 
         if (task.type === 'join_channel') {
