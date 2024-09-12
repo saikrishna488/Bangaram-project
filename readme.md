@@ -1,7 +1,3 @@
-Here's a template for a README file for the Bangaram Token platform. You can customize it as needed:
-
----
-
 # Bangaram Token Platform
 
 Welcome to the Bangaram Token Platform! This is a promotional platform where users can earn tokens through various activities. The platform is currently in the promotion stage, and we're distributing free tokens to attract users.
@@ -121,7 +117,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Contact
 
 For any questions or feedback, please reach out to us at [your-email@example.com](mailto:bangaramcrypto@gmail.com).
-
----
-
-Feel free to adjust the sections based on your project specifics and needs.
