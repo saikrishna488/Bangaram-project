@@ -7,6 +7,7 @@ import DailyRewardCard from './DailyRewardCard';
 import EarnCard from './EarnCard';
 import WalletButton from './WalletButton';
 import { BeatLoader } from 'react-spinners';
+import { toast } from 'react-toastify';
 
 const Home = () => {
   const { user, setUser } = useContext(globalContext);
@@ -22,7 +23,6 @@ const Home = () => {
           telegramUsername: 'captain488',
           telegram_id: '74656745634',
           start: '4672560395',
-          photo_url: '' // Sample photo URL for development
         };
       }
 
@@ -30,22 +30,20 @@ const Home = () => {
         const telegramUsername = window.Telegram.WebApp.initDataUnsafe.user.username;
         const telegram_id = window.Telegram.WebApp.initDataUnsafe.user.id;
         const start = window.Telegram.WebApp.initDataUnsafe.start_param;
-        const photo_url = window.Telegram.WebApp.initDataUnsafe.user.photo_url;
-        // window.Telegram.WebApp.setThemeParams({
-        //   "header_color": "#000000"
-        // });
-        return { telegramUsername, telegram_id, start, photo_url };
+        window.Telegram.WebApp.setHeaderColor('#000000');
+        window.Telegram.WebApp.setBackgroundColor('#000000');
+
+        return {telegramUsername , telegram_id , start}
       }
 
       return null;
     };
 
     const fetchUser = async () => {
-      const { telegramUsername, telegram_id, start, photo_url } = getTelegramUsername();
+      const { telegramUsername, telegram_id, start} = getTelegramUsername();
 
       if (telegramUsername) {
         setUsername(telegramUsername);
-        setPhotoUrl(photo_url);
 
         try {
           const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user`, {
@@ -72,9 +70,6 @@ const Home = () => {
     if (!username) {
       fetchUser();
     }
-
-
-
 
   }, [username]);
 
@@ -122,11 +117,11 @@ const Home = () => {
       {/* Actions Section */}
       <div className='w-full flex justify-center relative'>
         <div className="flex space-x-4 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-900 px-4">
-          <DailyRewardCard 
-            username={username} 
-            setUser={setUser} 
-            rewardClaimed={rewardClaimed} 
-            setRewardClaimed={setRewardClaimed} 
+          <DailyRewardCard
+            username={username}
+            setUser={setUser}
+            rewardClaimed={rewardClaimed}
+            setRewardClaimed={setRewardClaimed}
           />
           <EarnCard />
         </div>
