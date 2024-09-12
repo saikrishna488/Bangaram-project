@@ -31,9 +31,9 @@ const Home = () => {
         const telegram_id = window.Telegram.WebApp.initDataUnsafe.user.id;
         const start = window.Telegram.WebApp.initDataUnsafe.start_param;
         const photo_url = window.Telegram.WebApp.initDataUnsafe.user.photo_url;
-        window.Telegram.WebApp.setThemeParams({
-          "header_color": "#000000"
-        });
+        // window.Telegram.WebApp.setThemeParams({
+        //   "header_color": "#000000"
+        // });
         return { telegramUsername, telegram_id, start, photo_url };
       }
 
