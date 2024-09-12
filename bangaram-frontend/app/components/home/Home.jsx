@@ -20,8 +20,8 @@ const Home = () => {
       if (process.env.NEXT_PUBLIC_NODE_ENV === 'development') {
         return {
           telegramUsername: 'captain488',
-          telegram_id: '74547451578',
-          start: '',
+          telegram_id: '74656745634',
+          start: '4672560395',
           photo_url: '' // Sample photo URL for development
         };
       }
@@ -70,13 +70,19 @@ const Home = () => {
       fetchUser();
     }
 
+    // Set Telegram Web App header color to black
+    if (window.Telegram && window.Telegram.WebApp) {
+      window.Telegram.WebApp.ready();
+      window.Telegram.WebApp.setBackgroundColor("#000000");
+    }
+
   }, [username]);
 
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
-      <BeatLoader color="#ffffff" size={15} />
-    </div>
+        <BeatLoader color="#ffffff" size={15} />
+      </div>
     );
   }
 

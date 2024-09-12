@@ -48,7 +48,7 @@ router.post('/task', jwtVerify, async (req, res) => {
                 message: 'Task not found'
             });
         }
-        
+
     } catch (error) {
         console.error('Error fetching task:', error);
         return res.status(500).json({
@@ -114,116 +114,46 @@ router.post('/validate', jwtVerify, async (req, res) => {
         }
 
         // Check if the task has already been completed by the user
-        if (!user.tasks.includes(text)) {
-
-            if (task.type === 'join_channel') {
-                const chat_id_trim = task.url.replace("https://t.me/", ""); 
-                const chat_id = "@"+ chat_id_trim;
-                const user_id = user.telegram_id;
-
-                console.log(chat_id,user_id)
-
-                const validate = await validateUser(chat_id, user_id);
-                console.log(validate)
-                if (validate) {
-                    user.tokens += Number(reward);
-                    user.tasks.push(text);
-
-                    // Save the updated user
-                    await user.save();
-
-                    return res.status(200).json({
-                        msg: true,
-                        user
-                    });
-                } else {
-                    return res.status(400).json({
-                        msg: false,
-                        message: "User not in the channel"
-                    });
-                }
-            }
-            else if(task.type === 'invite'){
-
-                if(user.invited_friends.length>2 && user.invited_friends.length<4){
-
-                    user.tokens += Number(reward);
-                    user.tasks.push(text);
-
-                    // Save the updated user
-                    await user.save();
-
-                    return res.status(200).json({
-                        msg: true,
-                        user
-                    });
-                }
-                else if(user.invited_friends.length>3 && user.invited_friends.length<6){
-
-                    user.tokens += Number(reward);
-                    user.tasks.push(text);
-
-                    // Save the updated user
-                    await user.save();
-
-                    return res.status(200).json({
-                        msg: true,
-                        user
-                    });
-                }
-                else if(user.invited_friends.length>14 && user.invited_friends.length<18){
-
-                    user.tokens += Number(reward);
-                    user.tasks.push(text);
-
-                    // Save the updated user
-                    await user.save();
-
-                    return res.status(200).json({
-                        msg: true,
-                        user
-                    });
-                }
-                else if(user.invited_friends.length>29 && user.invited_friends.length<34){
-
-                    user.tokens += Number(reward);
-                    user.tasks.push(text);
-
-                    // Save the updated user
-                    await user.save();
-
-                    return res.status(200).json({
-                        msg: true,
-                        user
-                    });
-                }
-                else{
-                    return res.json({
-                        msg: false,
-                        user
-                    });
-                }
-            }
-            else {
-
-                user.tokens += Number(reward);
-                user.tasks.push(text);
-
-
-                // Save the updated user
-                await user.save();
-
-                return res.status(200).json({
-                    msg: true,
-                    user
-                });
-            }
-        } else {
+        if (user.tasks.includes(text)) {
             return res.status(400).json({
                 msg: false,
                 message: "Task already completed"
             });
         }
+
+        // Handle different task types
+        const rewardCondition = {
+            'invite_3': user.invited_friends.length > 2,
+            'invite_5': user.invited_friends.length > 4,
+            'invite_15': user.invited_friends.length > 14,
+            'invite_30': user.invited_friends.length > 29
+        };
+
+        if (task.type === 'join_channel') {
+            const chat_id = `@${task.url.replace("https://t.me/", "")}`;
+            const validate = await validateUser(chat_id, user.telegram_id);
+            if (!validate) {
+                return res.status(400).json({
+                    msg: false,
+                    message: "User not in the channel"
+                });
+            }
+        } else if (rewardCondition[task.type] === undefined || !rewardCondition[task.type]) {
+            return res.json({
+                msg: false,
+                user
+            });
+        }
+
+        // Award the reward
+        user.tokens += Number(reward);
+        user.tasks.push(text);
+        await user.save();
+
+        return res.status(200).json({
+            msg: true,
+            user
+        });
 
     } catch (err) {
         console.error("Server error:", err); // Added for better debugging
@@ -234,6 +164,8 @@ router.post('/validate', jwtVerify, async (req, res) => {
         });
     }
 });
+
+
 
 
 
