@@ -3,18 +3,17 @@ import React, { useContext, useEffect, useState } from 'react';
 import { globalContext } from '../../../contextapi/GlobalContext'; // Context file
 import axios from 'axios';
 import { FaUserCircle } from 'react-icons/fa';
-import DailyRewardCard from './DailyRewardCard';
-import EarnCard from './EarnCard';
 import WalletButton from './WalletButton';
 import { BeatLoader } from 'react-spinners';
+import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 
 const Home = () => {
   const { user, setUser } = useContext(globalContext);
   const [loading, setLoading] = useState(true);
-  const [rewardClaimed, setRewardClaimed] = useState(false);
   const [photoUrl, setPhotoUrl] = useState("");
   const [username, setUsername] = useState(null);
+  const router = useRouter()
 
   useEffect(() => {
     const getTelegramUsername = () => {
@@ -33,14 +32,14 @@ const Home = () => {
         window.Telegram.WebApp.setHeaderColor('#000000');
         window.Telegram.WebApp.setBackgroundColor('#000000');
 
-        return {telegramUsername , telegram_id , start}
+        return { telegramUsername, telegram_id, start };
       }
 
       return null;
     };
 
     const fetchUser = async () => {
-      const { telegramUsername, telegram_id, start} = getTelegramUsername();
+      const { telegramUsername, telegram_id, start } = getTelegramUsername();
 
       if (telegramUsername) {
         setUsername(telegramUsername);
@@ -87,7 +86,7 @@ const Home = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-black text-white px-4 py-8">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-black text-white px-4 py-8 relative">
       {/* User Profile */}
       <div className="flex flex-col items-center mb-8">
         {
@@ -114,21 +113,17 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Actions Section */}
-      <div className='w-full flex justify-center relative'>
-        <div className="flex space-x-4 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-900 px-4">
-          <DailyRewardCard
-            username={username}
-            setUser={setUser}
-            rewardClaimed={rewardClaimed}
-            setRewardClaimed={setRewardClaimed}
-          />
-          <EarnCard />
-        </div>
-      </div>
-
       {/* Wallet Button */}
       <WalletButton walletAddress={user.wallet_address} />
+
+      {/* Fixed "Mine" Button */}
+      <button
+        onClick={() => router.push('/mine')}
+        className="fixed bottom-0 w-[90%] bg-white text-black p-4 text-lg font-semibold shadow-lg border border-gray-300 rounded-md transition-all duration-300 ease-in-out hover:border-gray-500 hover:bg-gray-100"
+        style={{ marginBottom: '90px' }} // Adjust this value to fit the height of your navbar
+      >
+        Mine
+      </button>
     </div>
   );
 };
