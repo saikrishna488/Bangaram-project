@@ -9,7 +9,7 @@ import { BeatLoader } from 'react-spinners';
 const getAvatarUrl = (seed) => {
     const avatarStyles = [
         "avataaars", "adventurer", "big-ears", "big-smile", "bottts",
-        "croodles", "fun-emoji", "micah", "pixel-art", "open-peeps"
+        "croodles", "micah", "pixel-art", "open-peeps"
     ]; // List of avatar styles
     const styleIndex = Math.floor(Math.random() * avatarStyles.length);
     const selectedStyle = avatarStyles[styleIndex];
