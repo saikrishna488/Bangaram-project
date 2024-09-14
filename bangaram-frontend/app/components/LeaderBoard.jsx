@@ -1,10 +1,20 @@
-"use client";
-
+"use client"
 import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { globalContext } from '@/contextapi/GlobalContext';
 import { BeatLoader } from 'react-spinners';
+
+// Generate a random avatar URL using DiceBear API
+const getAvatarUrl = (seed) => {
+    const avatarStyles = [
+        "avataaars", "adventurer", "big-ears", "big-smile", "bottts",
+        "croodles", "fun-emoji", "micah", "pixel-art", "open-peeps"
+    ]; // List of avatar styles
+    const styleIndex = Math.floor(Math.random() * avatarStyles.length);
+    const selectedStyle = avatarStyles[styleIndex];
+    return `https://api.dicebear.com/6.x/${selectedStyle}/svg?seed=${seed}`;
+};
 
 const LeaderBoard = () => {
     const [leaderboard, setLeaderBoard] = useState([]);
@@ -13,7 +23,6 @@ const LeaderBoard = () => {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-
         if (!user?.username) {
             setLoading(true);
         }
@@ -65,39 +74,58 @@ const LeaderBoard = () => {
     }
 
     return (
-        <div className="min-h-screen bg-black text-white py-10 px-4 sm:px-6 lg:px-8 pb-20">
+        <div className="min-h-screen bg-black text-white py-10 px-4 sm:px-6 lg:px-8 relative pb-24">
             <div className="max-w-4xl mx-auto">
 
                 {/* User Rank Section */}
                 {userRank && (
-                    <div className="bg-black border border-gray-700 shadow-lg rounded-lg p-6 mb-8">
-                        <h4 className="text-2xl font-semibold mb-4 text-base sm:text-xl">Your Rank</h4>
-                        <div className="p-4 bg-black rounded-lg">
-                            <div className="flex items-center justify-between text-sm sm:text-lg">
+                    <div className="bg-gray-700 border border-gray-600 shadow-lg rounded-lg p-6 mb-8 flex items-center justify-between">
+                        <div className="flex items-center">
+                            <img
+                                src={getAvatarUrl(userRank.username)} // Avatar based on username
+                                alt="User Avatar"
+                                className="w-10 h-10 mr-4 rounded-full"
+                            />
+                            <div>
+                                <p className="text-lg font-medium">{userRank.username}</p>
                                 <div className="flex items-center">
-                                    <p className="font-medium text-sm sm:text-base mr-2">{userRank.rank}. {userRank.username}</p>
-                                </div>
-                                <div className="flex items-center">
-                                    <p className="mr-2 text-sm sm:text-base">{formatTokens(userRank.tokens)}</p>
-                                    <img src="logo.png" alt="Bangaram Logo" className="w-5 h-5" />
+                                    <p className="text-sm text-gray-400 mr-2">{formatTokens(userRank.tokens)}</p>
+                                    <img
+                                        src="/logo.png"
+                                        alt="Bangaram Logo"
+                                        className="w-6 h-6"
+                                    />
                                 </div>
                             </div>
                         </div>
+                        <p className="text-xl font-bold">#{userRank.rank}</p>
                     </div>
                 )}
 
                 {/* Leaderboard Section */}
-                <h2 className="text-3xl font-bold text-center mb-8 text-xl sm:text-3xl">Leaderboard</h2>
+                <h2 className="text-3xl font-bold text-center mb-8">Leaderboard</h2>
                 <div className="space-y-4">
-                    {leaderboard.length ? leaderboard.map((user, index) => (
-                        <div key={index} className="bg-black border border-gray-700 rounded-lg flex items-center p-4 shadow-md">
-                            <div className="flex-1">
-                                <p className="text-sm sm:text-base font-medium">{index + 1}. {user.username}</p> {/* Reduced font size */}
-                            </div>
+                    {leaderboard.length ? leaderboard.map((leader, index) => (
+                        <div key={index} className="bg-gray-700 border border-gray-600 rounded-lg p-4 shadow-md flex items-center justify-between">
                             <div className="flex items-center">
-                                <p className="mr-2 text-sm sm:text-base font-bold">{formatTokens(user.tokens)}</p>
-                                <img src="logo.png" alt="Bangaram Logo" className="w-6 h-6" />
+                                <img
+                                    src={getAvatarUrl(leader.username)} // Avatar based on username
+                                    alt="User Avatar"
+                                    className="w-10 h-10 mr-4 rounded-full"
+                                />
+                                <div>
+                                    <p className="text-lg font-medium">{leader.username}</p>
+                                    <div className="flex items-center">
+                                        <p className="text-sm text-gray-400 mr-2">{formatTokens(leader.tokens)}</p>
+                                        <img
+                                            src="/logo.png"
+                                            alt="Bangaram Logo"
+                                            className="w-6 h-6"
+                                        />
+                                    </div>
+                                </div>
                             </div>
+                            <p className="text-xl font-bold">#{index + 1}</p>
                         </div>
                     )) : (
                         <div className="text-center text-gray-400">No users found.</div>

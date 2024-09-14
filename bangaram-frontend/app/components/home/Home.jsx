@@ -118,11 +118,11 @@ const Home = () => {
 
       {/* Fixed "Mine" Button */}
       <button
-        onClick={() => router.push('/mine')}
+        onClick={() => router.push('/earn')}
         className="fixed bottom-0 w-[90%] bg-white text-black p-4 text-lg font-semibold shadow-lg border border-gray-300 rounded-md transition-all duration-300 ease-in-out hover:border-gray-500 hover:bg-gray-100"
         style={{ marginBottom: '90px' }} // Adjust this value to fit the height of your navbar
       >
-        Mine
+        Play games
       </button>
     </div>
   );

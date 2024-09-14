@@ -14,7 +14,7 @@ const Navbar = () => {
       <Link href="/tasks" passHref>
         <div className="flex flex-col items-center cursor-pointer text-center">
           <FaTasks className="text-2xl mb-1 sm:text-3xl" />
-          <span className="text-xs sm:text-sm">Tasks</span>
+          <span className="text-xs sm:text-sm">Earn</span>
         </div>
       </Link>
       

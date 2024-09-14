@@ -80,7 +80,7 @@ const FriendsPage = () => {
               {user.invited_friends.map((friend, index) => (
                 <li
                   key={index}
-                  className="bg-black p-4 rounded-lg shadow-md flex items-center justify-between border border-blue-600 hover:border-pink-500 transition-all duration-300"
+                  className="bg-gray-700 p-4 rounded-lg shadow-md flex items-center justify-between transition-all duration-300"
                 >
                   <div className="flex items-center space-x-2">
                     <FaUserFriends className="text-white" /> {/* Friends icon */}

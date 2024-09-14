@@ -4,8 +4,12 @@ import React, { useState, useEffect, useContext } from 'react';
 import { globalContext } from '../../contextapi/GlobalContext'; // Context file
 import axios from 'axios'; // For API calls
 import { toast } from 'react-toastify';
-import { FiList } from 'react-icons/fi'; 
-import { BeatLoader } from 'react-spinners';// Import new white task icon
+import { BeatLoader } from 'react-spinners'; // Import new white task icon
+
+// Import 3D icons from react-icons for YouTube, Twitter, Telegram, etc.
+import { FaYoutube, FaTwitter, FaTelegramPlane, FaGift } from 'react-icons/fa';
+import { GiPartyPopper } from 'react-icons/gi'; // Icon for free rewards
+import { IoIosPeople } from 'react-icons/io'; // Icon for invite tasks
 
 const TasksPage = () => {
   const [tasks, setTasks] = useState([]);
@@ -40,8 +44,8 @@ const TasksPage = () => {
             toast.error("Connect wallet");
             return;
           }
-        }
-        else if(task.type === "free"){
+        } else if (task.type === "free") {
+          // Handle free task logic if necessary
         } else {
           window.open(task.url);
         }
@@ -57,14 +61,11 @@ const TasksPage = () => {
             "Authorization": process.env.NEXT_PUBLIC_TOKEN
           }
         });
-        console.log(res.data)
 
         if (res.data.msg) {
           toast.success('Tokens claimed successfully!');
           setClaimedTasks(prev => new Set(prev).add(task.text)); // Update claimed tasks
           setUser(res.data.user);
-
-          
         } else {
           toast.error('Complete the task');
         }
@@ -84,18 +85,37 @@ const TasksPage = () => {
     return new Intl.NumberFormat().format(num);
   };
 
+  const getIconByTaskType = (task) => {
+    switch (task.type) {
+      case 'youtube':
+        return <FaYoutube className="text-red-600 text-xl" />;
+      case 'twitter':
+        return <FaTwitter className="text-blue-400 text-xl" />;
+      case 'join_channel':
+        return <FaTelegramPlane className="text-blue-500 text-xl" />;
+      case 'free':
+        return <FaGift className="text-yellow-400 text-xl" />;
+      case 'invite_3':
+      case 'invite_5':
+      case 'invite_15':
+      case 'invite_30':
+        return <IoIosPeople className="text-green-500 text-xl" />;
+      default:
+        return <GiPartyPopper className="text-purple-400 text-xl" />; // Default icon for other tasks
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
-      <BeatLoader color="#ffffff" size={15} />
-    </div>
+        <BeatLoader color="#ffffff" size={15} />
+      </div>
     );
   }
 
-
   if (!user || !user.username || loading) {
-    setLoading(true)
-    return null
+    setLoading(true);
+    return null;
   }
 
   const incompleteTasks = tasks.filter(task => !hasCompletedTask(task.text));
@@ -108,22 +128,22 @@ const TasksPage = () => {
         <div>
           <h2 className="text-2xl font-semibold text-white mb-4">Complete Tasks</h2>
           {incompleteTasks.length === 0 ? (
-            <p className="text-center text-gray-400">No tasks available.</p>
+            <p className="text-center text-white">No tasks available.</p>
           ) : (
             <div className="space-y-4">
               {incompleteTasks.map((task) => (
                 <div
                   key={task._id}
-                  className="bg-black border border-gray-700 rounded-lg p-4 shadow-lg flex flex-col items-start justify-between
+                  className="bg-gray-700 border border-gray-600 rounded-lg p-4 shadow-lg flex flex-col items-start justify-between
                              hover:border-gray-500 transition-all duration-300"
                 >
                   <div className="flex items-center space-x-2">
-                    <FiList className="text-white text-xl" /> {/* New white task icon */}
-                    <span className="text-lg font-semibold text-gray-100">{task.text}</span>
+                    {getIconByTaskType(task)}
+                    <span className="text-lg font-semibold text-white">{task.text}</span>
                   </div>
                   <div className="flex items-center justify-between w-full mt-4">
                     <div className="flex items-center space-x-2">
-                      <span className="text-lg font-medium text-gray-100">Reward: {formatNumber(task.reward)}</span>
+                      <span className="text-lg font-medium text-white">Reward: {formatNumber(task.reward)}</span>
                       <img src="/logo.png" alt="Bangaram Logo" className="w-6 h-6" />
                     </div>
                     <button
@@ -147,21 +167,21 @@ const TasksPage = () => {
         <div className="mt-8">
           <h2 className="text-2xl font-semibold text-white mb-4">Completed Tasks</h2>
           {completedTasks.length === 0 ? (
-            <p className="text-center text-gray-400">No completed tasks.</p>
+            <p className="text-center text-white">No completed tasks.</p>
           ) : (
             <div className="space-y-4">
               {completedTasks.map((task) => (
                 <div
                   key={task._id}
-                  className="bg-black border border-gray-700 rounded-lg p-4 shadow-lg flex flex-col items-start justify-between"
+                  className="bg-gray-700 border border-gray-600 rounded-lg p-4 shadow-lg flex flex-col items-start justify-between"
                 >
                   <div className="flex items-center space-x-2">
-                    <FiList className="text-gray-400 text-xl" /> {/* Gray task icon */}
-                    <span className="text-lg font-semibold text-gray-300">{task.text}</span>
+                    {getIconByTaskType(task)}
+                    <span className="text-lg font-semibold text-white">{task.text}</span>
                   </div>
                   <div className="flex items-center justify-between w-full mt-4">
                     <div className="flex items-center space-x-2">
-                      <span className="text-lg font-medium text-gray-300">Reward: {formatNumber(task.reward)}</span>
+                      <span className="text-lg font-medium text-white">Reward: {formatNumber(task.reward)}</span>
                       <img src="/logo.png" alt="Bangaram Logo" className="w-6 h-6" />
                     </div>
                   </div>
