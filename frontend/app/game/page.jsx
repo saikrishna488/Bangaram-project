@@ -11,16 +11,13 @@ const CoinDropGame = () => {
   const [coins, setCoins] = useState([]);
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(40); // Set initial time to 40 seconds
-  const [showPopup, setShowPopup] = useState(false); // State to control popup visibility
-  const { user,setUser } = useContext(globalContext);
-  const [loading, setLoading] = useState(false)
+  const { user, setUser } = useContext(globalContext);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-
-
   if (!user?.tickets > 0) {
-    router.push('/')
-    toast.error("Invite Friends Get more Tickets")
+    router.push("/");
+    toast.error("Invite Friends Get more Tickets");
   }
 
   // Function to generate coins at random intervals
@@ -40,42 +37,37 @@ const CoinDropGame = () => {
     return () => clearInterval(interval);
   }, []);
 
-
-
-
-
   // Timer effect
   useEffect(() => {
-
     const handleClaim = async () => {
-
       try {
-        setLoading(true)
+        setLoading(true);
 
-        const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/dropgame`, {
-          username: user.username,
-          tokens : score
-        }, {
-          headers: {
-            "Authorization": process.env.NEXT_PUBLIC_TOKEN
+        const res = await axios.post(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/dropgame`,
+          {
+            username: user.username,
+            tokens: score,
+          },
+          {
+            headers: {
+              Authorization: process.env.NEXT_PUBLIC_TOKEN,
+            }
           }
-        });
+        );
 
-        if(res.data.res){
-          setUser(res.data.user)
-          toast.success("Claimed "+score+" BGRM successfully")
-          router.push('/')
+        if (res.data.res) {
+          setUser(res.data.user);
+          toast.success("Claimed " + score + " BGRM successfully");
+          router.push("/");
         }
+      } catch (err) {
+        toast("Error occurred");
+        console.log(err);
+      } finally {
+        setLoading(false);
       }
-      catch (err) {
-        toast("Error occured")
-        console.log(err)
-      }
-      finally{
-        setLoading(false)
-      }
-    }
-
+    };
 
     if (timeLeft > 0) {
       const timer = setInterval(() => {
@@ -83,12 +75,11 @@ const CoinDropGame = () => {
       }, 1000);
       return () => clearInterval(timer);
     } else {
-
-      handleClaim()
+      handleClaim();
     }
   }, [timeLeft]);
 
-  // Handle coin click and trigger explosion
+  // Handle coin click and allow multiple simultaneous taps
   const handleCoinClick = (id, event) => {
     const clickX = event.clientX;
     const clickY = event.clientY;
@@ -97,23 +88,25 @@ const CoinDropGame = () => {
       prevCoins.map((coin) =>
         coin.id === id
           ? {
-            ...coin,
-            isExploding: true,
-            explosionPosition: { x: clickX, y: clickY },
-          }
+              ...coin,
+              isExploding: true,
+              explosionPosition: { x: clickX, y: clickY },
+            }
           : coin
       )
     );
 
+    // Do not block further clicks; score updates independently
     setTimeout(() => {
       setCoins((prevCoins) => prevCoins.filter((coin) => coin.id !== id));
-      setScore((prevScore) => prevScore + 10);
     }, 500);
+    
+    // Update score immediately without waiting for setTimeout to complete
+    setScore((prevScore) => prevScore + 10);
   };
 
-
   if (!user?.username) {
-    return <h4>Loading...</h4>
+    return <h4>Loading...</h4>;
   }
 
   if (loading) {
@@ -126,7 +119,7 @@ const CoinDropGame = () => {
 
   return (
     <div
-      className="relative h-screen bg-blue-100 overflow-hidden flex flex-col items-center justify-start select-none"
+      className="relative h-screen overflow-hidden flex flex-col items-center justify-start select-none"
       style={{
         backgroundImage: `url('game_bg.jpeg')`, // Correctly set the background image
         backgroundSize: "cover", // Cover the whole container
@@ -139,8 +132,9 @@ const CoinDropGame = () => {
         {coins.map((coin) => (
           <div
             key={coin.id}
-            className={`absolute p-0 cursor-pointer ${coin.isExploding ? "hidden" : "animate-coin-drop"
-              }`}
+            className={`absolute p-0 cursor-pointer ${
+              coin.isExploding ? "hidden" : "animate-coin-drop"
+            }`}
             style={{
               left: `${coin.x}%`,
               top: "-10%",
@@ -152,7 +146,11 @@ const CoinDropGame = () => {
             }}
             onClick={(event) => handleCoinClick(coin.id, event)}
           >
-            <img src={"logo.png"} alt="Coin" className="w-full h-full object-cover" />
+            <img
+              src={"logo.png"}
+              alt="Coin"
+              className="w-full h-full object-cover"
+            />
           </div>
         ))}
 
