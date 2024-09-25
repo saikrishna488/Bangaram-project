@@ -1,6 +1,6 @@
 // domainWhitelistMiddleware.js
 
-const allowedDomains = ['bangaram-project-saikrishna488s-projects.vercel.app', 'bangaram-project-git-main-saikrishna488s-projects.vercel.app','localhost'];
+const allowedDomains = ['bangaram-project.vercel.app', 'bangaram-project-git-main-saikrishna488s-projects.vercel.app','localhost'];
 
 function domainWhitelistMiddleware(req, res, next) {
     const origin = req.headers.origin;
@@ -9,6 +9,7 @@ function domainWhitelistMiddleware(req, res, next) {
     if (origin && allowedDomains.includes(new URL(origin).hostname)) {
         next(); // Domain is allowed, proceed to the next middleware
     } else {
+        console.log(origin , allowedDomains)
         res.status(403).json({ msg:false, message: 'Forbidden: Your domain is not allowed' });
     }
 }

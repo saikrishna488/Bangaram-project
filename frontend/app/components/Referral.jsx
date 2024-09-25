@@ -40,7 +40,7 @@ const FriendsPage = () => {
 
         {/* Referral Information Card */}
         <div className="mb-6 p-4 bg-gray-800 rounded-lg shadow-lg flex items-center">
-          <UserPlus className="text-yellow-400 mr-3" />
+        <UserPlus className="text-white mr-3 text-6xl" size={50}/>
           <div>
             <h2 className="text-lg font-semibold text-white">Invite Friends!</h2>
             <p className="text-gray-300">
