@@ -7,8 +7,7 @@ import { toast } from 'react-toastify';
 import { BeatLoader } from 'react-spinners'; // Import new white task icon
 
 // Import Lucide icons for YouTube, Twitter, Telegram, etc.
-import { Youtube, Twitter, Telegram, Gift, Users } from 'lucide-react'; // Lucide icons
-import { PartyPopper } from 'lucide-react'; // Icon for free rewards
+import { Youtube, Twitter, MessageCircle, Gift, Users, PartyPopper } from 'lucide-react';
 
 const TasksPage = () => {
   const [tasks, setTasks] = useState([]);
@@ -25,7 +24,9 @@ const TasksPage = () => {
             "Authorization": process.env.NEXT_PUBLIC_TOKEN
           }
         });
-        setTasks(response.data.data || []); // Assuming tasks are in `data` key
+        if(response.data.res){
+          setTasks(response.data.data);
+        } // Assuming tasks are in `data` key
       } catch (error) {
         console.error('Error fetching tasks:', error);
       }
@@ -84,7 +85,7 @@ const TasksPage = () => {
       case 'twitter':
         return <Twitter className="text-blue-400 text-xl" />;
       case 'join_channel':
-        return <Telegram className="text-blue-500 text-xl" />;
+        return <MessageCircle className="text-blue-500 text-xl" />;
       case 'free':
         return <Gift className="text-yellow-400 text-xl" />;
       case 'invite_3':
@@ -93,9 +94,10 @@ const TasksPage = () => {
       case 'invite_30':
         return <Users className="text-green-500 text-xl" />;
       default:
-        return <PartyPopper className="text-purple-400 text-xl" />; // Default icon for other tasks
+        return <PartyPopper className="text-purple-400 text-xl" />;
     }
   };
+
 
   if (loading) {
     return (
@@ -143,8 +145,8 @@ const TasksPage = () => {
                       onClick={() => handleClaim(task)}
                       disabled={hasCompletedTask(task.text)} // Disable button if task is completed
                       className={`px-4 py-2 rounded-lg transition-all duration-300 ${hasCompletedTask(task.text)
-                          ? 'bg-gray-500 text-gray-300 cursor-not-allowed'
-                          : 'bg-white text-black hover:bg-gray-200 shadow-lg'
+                        ? 'bg-gray-500 text-gray-300 cursor-not-allowed'
+                        : 'bg-white text-black hover:bg-gray-200 shadow-lg'
                         }`}
                     >
                       {hasCompletedTask(task.text) ? 'Claimed' : 'Claim'}

@@ -10,13 +10,13 @@ router.get('/', jwtVerify, async (req, res) => {
     try {
         const tasks = await taskModel.find({});
         res.status(200).json({
-            msg: true,
+            res: true,
             data: tasks
         });
     } catch (error) {
         res.status(500).json({
-            msg: false,
-            message: 'Error fetching tasks',
+            res: false,
+            msg: 'Error fetching tasks',
             error: error.message
         });
     }
