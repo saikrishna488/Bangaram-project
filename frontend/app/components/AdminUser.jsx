@@ -8,6 +8,7 @@ const AdminUser = () => {
   const [username, setUsername] = useState("");
   const [user, setUser] = useState({});
   const [tokens, setTokens] = useState("");
+  const [tickets, setTickets] = useState(0)
   const { key } = useContext(globalContext);
 
   const fetchUser = async (e) => {
@@ -76,6 +77,26 @@ const AdminUser = () => {
     }
   };
 
+
+  const updateTickets = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post(process.env.NEXT_PUBLIC_BACKEND_URL + '/user/updatetickets', { username,tickets }, {
+        headers: {
+          "Authorization": process.env.NEXT_PUBLIC_TOKEN
+        }
+      });
+      if (res.data.res) {
+        toast.success("Tickets updated successfully");
+        setUser(res.data.user)
+      } else {
+        toast.error("User Not found");
+      }
+    } catch (error) {
+      toast.error("Error deleting user");
+    }
+  };
+
   if (!key) {
     return null;
   }
@@ -109,6 +130,7 @@ const AdminUser = () => {
               <h5 className="text-lg font-semibold text-gray-800 dark:text-white">User Details</h5>
               <p className="text-gray-700 dark:text-gray-300">Username: {user.username}</p>
               <p className="text-gray-700 dark:text-gray-300">Tokens: {user.tokens}</p>
+              <p className="text-gray-700 dark:text-gray-300">Tickets: {user.tickets}</p>
               <h6 className="text-gray-700 dark:text-gray-300">Invited Friends:</h6>
               {user.invited_friends && user.invited_friends.map((frd, index) => (
                 <p key={index} className="text-gray-500 dark:text-gray-400">{index + 1}. {frd}</p>
@@ -147,6 +169,32 @@ const AdminUser = () => {
               className="w-full bg-green-600 text-white font-semibold py-2 rounded-lg hover:bg-green-700 transition-colors"
             >
               Update Tokens
+            </button>
+          </form>
+        </div>
+
+        <div className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6 mb-8">
+          <h4 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Update Tickets</h4>
+          <form onSubmit={updateTickets} className="flex flex-col space-y-4">
+            <input
+              type="text"
+              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 text-black dark:text-white"
+              placeholder="Enter Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+            <input
+              type="text"
+              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 text-black dark:text-white"
+              placeholder="Enter Tickets"
+              value={tickets}
+              onChange={(e) => setTickets(e.target.value)}
+            />
+            <button
+              type="submit"
+              className="w-full bg-green-600 text-white font-semibold py-2 rounded-lg hover:bg-green-700 transition-colors"
+            >
+              Update Tickets
             </button>
           </form>
         </div>

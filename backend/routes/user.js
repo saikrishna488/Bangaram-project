@@ -113,6 +113,41 @@ router.post('/dropgame', jwtVerify, async (req, res) => {
 });
 
 
+//update tickets
+router.post('/updatetickets', jwtVerify, async (req, res) => {
+    const { username, tickets } = req.body;
+
+    try {
+        // Validate input
+        if (!username || !tickets) {
+            return res.status(400).json({ res: false, msg: 'Username is required.' });
+        }
+
+        // Find user by username
+        const user = await userModel.findOne({ username });
+
+        if (!user) {
+            return res.status(404).json({ res: false, msg: 'User not found.' });
+        }
+
+        // Update tickets count
+        user.tickets = tickets  // Ensure tickets don't go below 0
+        await user.save();
+
+        return res.status(200).json({
+            res: true,
+            user
+        });
+    } catch (err) {
+        console.error('Error updating tickets:', err);
+        return res.status(500).json({
+            res: false,
+            error: err.message
+        });
+    }
+});
+
+
 
 router.post('/update-wallet', jwtVerify, async (req, res) => {
     const { id, wallet_address, username } = req.body;
