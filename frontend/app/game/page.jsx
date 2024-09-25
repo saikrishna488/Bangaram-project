@@ -10,7 +10,7 @@ import { toast } from "react-toastify";
 const CoinDropGame = () => {
   const [coins, setCoins] = useState([]);
   const [score, setScore] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(40); // Set initial time to 40 seconds
+  const [timeLeft, setTimeLeft] = useState(40);
   const { user, setUser } = useContext(globalContext);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -25,7 +25,7 @@ const CoinDropGame = () => {
     const interval = setInterval(() => {
       const newCoins = Array.from({ length: 3 }).map(() => ({
         id: Date.now() + Math.random(),
-        x: Math.random() * 90 + 5, // Ensure coins appear randomly in a valid range
+        x: Math.random() * 90 + 5,
         delay: Math.random() * 0.5,
         fallingSpeed: Math.random() * 1 + 5,
         isExploding: false,
@@ -52,7 +52,7 @@ const CoinDropGame = () => {
           {
             headers: {
               Authorization: process.env.NEXT_PUBLIC_TOKEN,
-            }
+            },
           }
         );
 
@@ -81,9 +81,12 @@ const CoinDropGame = () => {
 
   // Handle coin click and allow multiple simultaneous taps
   const handleCoinClick = (id, event) => {
+    event.stopPropagation(); // Prevent event bubbling
+
     const clickX = event.clientX;
     const clickY = event.clientY;
 
+    // Update coins' explosion state based on the clicked coin
     setCoins((prevCoins) =>
       prevCoins.map((coin) =>
         coin.id === id
@@ -96,13 +99,13 @@ const CoinDropGame = () => {
       )
     );
 
-    // Do not block further clicks; score updates independently
+    // Update score immediately
+    setScore((prevScore) => prevScore + 10);
+
+    // Remove the coin after a short delay
     setTimeout(() => {
       setCoins((prevCoins) => prevCoins.filter((coin) => coin.id !== id));
     }, 500);
-    
-    // Update score immediately without waiting for setTimeout to complete
-    setScore((prevScore) => prevScore + 10);
   };
 
   if (!user?.username) {
@@ -121,9 +124,9 @@ const CoinDropGame = () => {
     <div
       className="relative h-screen overflow-hidden flex flex-col items-center justify-start select-none"
       style={{
-        backgroundImage: `url('game_bg.jpeg')`, // Correctly set the background image
-        backgroundSize: "cover", // Cover the whole container
-        backgroundPosition: "center", // Center the image
+        backgroundImage: `url('game_bg.jpeg')`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
       }}
     >
       <h1 className="text-3xl text-white font-bold mt-4">Score: {score}</h1>
@@ -140,8 +143,8 @@ const CoinDropGame = () => {
               top: "-10%",
               animationDuration: `${coin.fallingSpeed}s`,
               animationDelay: `${coin.delay}s`,
-              width: "60px", // Fixed width for the coin
-              height: "60px", // Fixed height for the coin
+              width: "60px",
+              height: "60px",
               transition: "top 0s ease-in",
             }}
             onClick={(event) => handleCoinClick(coin.id, event)}
