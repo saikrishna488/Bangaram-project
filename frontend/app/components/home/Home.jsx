@@ -18,7 +18,7 @@ const Home = () => {
 
   useEffect(() => {
     const getTelegramUsername = () => {
-      if (process.env.NEXT_PUBLIC_NODE_ENV === 'development') {
+      if (!process.env.NEXT_PUBLIC_NODE_ENV === 'development') {
         return {
           telegramUsername: 'captain48802',
           telegram_id: '74656685634',
@@ -27,9 +27,9 @@ const Home = () => {
       }
 
       if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe) {
-        const telegramUsername = window.Telegram.WebApp.initDataUnsafe.user.username;
-        const telegram_id = window.Telegram.WebApp.initDataUnsafe.user.id;
-        const start = window.Telegram.WebApp.initDataUnsafe.start_param;
+        const telegramUsername = window.Telegram.WebApp.initDataUnsafe.user?.username || "";
+        const telegram_id = window.Telegram.WebApp.initDataUnsafe.user?.id || "";
+        const start = window.Telegram.WebApp.initDataUnsafe.start_param || "";
         window.Telegram.WebApp.setHeaderColor('#000000');
         window.Telegram.WebApp.setBackgroundColor('#000000');
 
@@ -45,7 +45,7 @@ const Home = () => {
     };
 
     const fetchUser = async () => {
-      const { telegramUsername, telegram_id, start } = getTelegramUsername();
+      const { telegramUsername, telegram_id, start } = getTelegramUsername() || {};
 
       if (telegramUsername) {
         setUsername(telegramUsername);
