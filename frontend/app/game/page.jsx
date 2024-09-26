@@ -1,179 +1,168 @@
-"use client";
+"use client"
 
-import { globalContext } from "@/contextapi/GlobalContext";
-import axios from "axios";
-import { useRouter } from "next/navigation";
-import React, { useState, useEffect, useContext } from "react";
-import { BeatLoader } from "react-spinners";
-import { toast } from "react-toastify";
+import { globalContext } from '@/contextapi/GlobalContext';
+import axios from 'axios';
+import { useRouter } from 'next/navigation';
+import React, { useState, useEffect, useRef, useContext } from 'react';
+import { BeatLoader } from 'react-spinners';
+import { toast } from 'react-toastify';
 
-const CoinDropGame = () => {
-  const [coins, setCoins] = useState([]);
-  const [score, setScore] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(40);
-  const { user, setUser } = useContext(globalContext);
-  const [loading, setLoading] = useState(false);
-  const router = useRouter();
+const DropGame = () => {
+    const [coins, setCoins] = useState([]);
+    const [score, setScore] = useState(0);
+    const [timeLeft, setTimeLeft] = useState(40);
+    const { user, setUser } = useContext(globalContext);
+    const [loading, setLoading] = useState(false);
+    const router = useRouter();
 
-  if (!user?.tickets > 0) {
-    router.push("/");
-    toast.error("Invite Friends Get more Tickets");
-  }
+    const dropFrequency = 500
+    const coinSpeed = 5
+    const coinSize = 60; // Set the coin size (width and height)
+    const requestRef = useRef();  // For requestAnimationFrame
 
-  // Function to generate coins at random intervals
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const newCoins = Array.from({ length: 3 }).map(() => ({
-        id: Date.now() + Math.random(),
-        x: Math.random() * 90 + 5,
-        delay: Math.random() * 0.5,
-        fallingSpeed: Math.random() * 1 + 5,
-        isExploding: false,
-        explosionPosition: { x: 0, y: 0 },
-      }));
-      setCoins((prevCoins) => [...prevCoins, ...newCoins]);
-    }, 1000);
+    // Generate coins periodically
+    useEffect(() => {
+        const dropInterval = setInterval(() => {
+            const newCoin = {
+                id: Date.now(),
+                // Ensure the coin is fully visible within the screen width
+                x: Math.random() * (window.innerWidth - coinSize),
+                y: 0
+            };
+            setCoins(prevCoins => [...prevCoins, newCoin]);
+        }, dropFrequency);
 
-    return () => clearInterval(interval);
-  }, []);
+        return () => clearInterval(dropInterval);
+    }, []);
 
-  // Timer effect
-  useEffect(() => {
-    const handleClaim = async () => {
-      try {
-        setLoading(true);
+    // Timer logic
+    useEffect(() => {
 
-        const res = await axios.post(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/dropgame`,
-          {
-            username: user.username,
-            tokens: score,
-          },
-          {
-            headers: {
-              Authorization: process.env.NEXT_PUBLIC_TOKEN,
-            },
-          }
-        );
+        const handleClaim = async () => {
+            try {
+                setLoading(true);
 
-        if (res.data.res) {
-          setUser(res.data.user);
-          toast.success("Claimed " + score + " BGRM successfully");
-          router.push("/");
+                const res = await axios.post(
+                    `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/dropgame`,
+                    {
+                        username: user.username,
+                        tokens: score,
+                    },
+                    {
+                        headers: {
+                            Authorization: process.env.NEXT_PUBLIC_TOKEN,
+                        },
+                    }
+                );
+
+                if (res.data.res) {
+                    setUser(res.data.user);
+                    toast.success("Claimed " + score + " BGRM successfully");
+                    router.push("/");
+                }
+            } catch (err) {
+                toast("Error occurred");
+                console.log(err);
+            } finally {
+                router.push("/");
+                setLoading(false);
+            }
+        };
+
+        if (timeLeft > 0) {
+            const timer = setInterval(() => setTimeLeft(timeLeft - 1), 1000);
+            return () => clearInterval(timer);
         }
-      } catch (err) {
-        toast("Error occurred");
-        console.log(err);
-      } finally {
-        setLoading(false);
-      }
+        else {
+
+            handleClaim()
+
+        }
+    }, [timeLeft]);
+
+
+
+
+
+
+
+    // Coin falling logic using requestAnimationFrame
+    const animateCoins = () => {
+        setCoins(prevCoins =>
+            prevCoins.map(coin => ({ ...coin, y: coin.y + coinSpeed }))
+        );
+        requestRef.current = requestAnimationFrame(animateCoins);
     };
 
-    if (timeLeft > 0) {
-      const timer = setInterval(() => {
-        setTimeLeft((prev) => prev - 1);
-      }, 1000);
-      return () => clearInterval(timer);
-    } else {
-      handleClaim();
-    }
-  }, [timeLeft]);
+    useEffect(() => {
+        requestRef.current = requestAnimationFrame(animateCoins);
+        return () => cancelAnimationFrame(requestRef.current);
+    }, [coinSpeed]);
 
-  // Handle coin click and allow multiple simultaneous taps
-  const handleCoinClick = (id, event) => {
-    event.stopPropagation(); // Prevent event bubbling
+    // Handle coin touch/click
+    const handleCoinClick = (id) => {
+        setScore(score + 1);
+        setCoins(coins.filter(coin => coin.id !== id));
+    };
 
-    const clickX = event.clientX;
-    const clickY = event.clientY;
 
-    // Update coins' explosion state based on the clicked coin
-    setCoins((prevCoins) =>
-      prevCoins.map((coin) =>
-        coin.id === id
-          ? {
-              ...coin,
-              isExploding: true,
-              explosionPosition: { x: clickX, y: clickY },
-            }
-          : coin
-      )
-    );
 
-    // Update score immediately
-    setScore((prevScore) => prevScore + 10);
 
-    // Remove the coin after a short delay
-    setTimeout(() => {
-      setCoins((prevCoins) => prevCoins.filter((coin) => coin.id !== id));
-    }, 500);
-  };
 
-  if (!user?.username) {
-    return <h4>Loading...</h4>;
-  }
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <BeatLoader color="#ffffff" size={15} />
-      </div>
-    );
-  }
-
-  return (
-    <div
-      className="relative h-screen overflow-hidden flex flex-col items-center justify-start select-none"
-      style={{
-        backgroundImage: `url('game_bg.jpeg')`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
-    >
-      <h1 className="text-3xl text-white font-bold mt-4">Score: {score}</h1>
-      <h2 className="text-xl text-white">Time Left: {timeLeft}s</h2>
-      <div className="relative w-full h-full">
-        {coins.map((coin) => (
-          <div
-            key={coin.id}
-            className={`absolute p-0 cursor-pointer ${
-              coin.isExploding ? "hidden" : "animate-coin-drop"
-            }`}
-            style={{
-              left: `${coin.x}%`,
-              top: "-10%",
-              animationDuration: `${coin.fallingSpeed}s`,
-              animationDelay: `${coin.delay}s`,
-              width: "60px",
-              height: "60px",
-              transition: "top 0s ease-in",
-            }}
-            onClick={(event) => handleCoinClick(coin.id, event)}
-          >
-            <img
-              src={"logo.png"}
-              alt="Coin"
-              className="w-full h-full object-cover"
-            />
-          </div>
-        ))}
-
-        {coins
-          .filter((coin) => coin.isExploding)
-          .map((coin) => (
-            <div
-              key={coin.id}
-              className="absolute text-red-500 text-6xl animate-explode"
-              style={{
-                left: `${coin.explosionPosition.x}px`,
-                top: `${coin.explosionPosition.y}px`,
-              }}
-            >
-              💥
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center h-screen">
+                <BeatLoader color="#ffffff" size={15} />
             </div>
-          ))}
-      </div>
-    </div>
-  );
+        );
+    }
+
+    if (!user?.username) {
+        setLoading(true)
+    }
+
+
+    return (
+        <div
+            className="relative h-screen w-screen overflow-hidden"
+            style={{
+                backgroundImage: `url('game_bg.jpeg')`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center'
+            }}
+        >
+            <div className="absolute top-4 left-4 text-xl font-bold text-white">Score: {score}</div>
+            <div className="absolute top-4 right-4 text-xl font-bold text-white">Time Left: {timeLeft}s</div>
+
+            {coins.map(coin => (
+                <img
+                    key={coin.id}
+                    src="logo.png"
+                    alt="coin"
+                    className="absolute"
+                    onTouchStart={() => handleCoinClick(coin.id)} // for mobile touch
+                    onClick={() => handleCoinClick(coin.id)}     // for development/testing on desktop
+                    style={{
+                        top: `${coin.y}px`,
+                        left: `${coin.x}px`,
+                        width: `${coinSize}px`,
+                        height: `${coinSize}px`,
+                        userSelect: 'none',       // Prevent text selection
+                        pointerEvents: 'auto',    // Enable pointer events for clicking
+                        cursor: 'pointer',        // Pointer cursor for better UX
+                    }}
+                    draggable="false"  // Prevent image dragging
+                />
+            ))}
+
+            {timeLeft === 0 && (
+                <div className="absolute inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center text-white text-2xl">
+                    Game Over! Final Score: {score}
+                </div>
+            )}
+        </div>
+    );
 };
 
-export default CoinDropGame;
+export default DropGame;
