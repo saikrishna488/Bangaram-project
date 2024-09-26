@@ -18,7 +18,7 @@ const Home = () => {
 
   useEffect(() => {
     const getTelegramUsername = () => {
-      if (!process.env.NEXT_PUBLIC_NODE_ENV === 'development') {
+      if (process.env.NEXT_PUBLIC_NODE_ENV === 'development') {
         return {
           telegramUsername: 'captain48802',
           telegram_id: '74656685634',
