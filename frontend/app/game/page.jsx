@@ -16,20 +16,25 @@ const DropGame = () => {
     const router = useRouter();
 
     const dropFrequency = 400
-    const coinSpeed = 5
+    const coinSpeed = 6
     const coinSize = 60; // Set the coin size (width and height)
+    const coinsPerDrop = 3
     const requestRef = useRef();  // For requestAnimationFrame
 
     // Generate coins periodically
     useEffect(() => {
+
         const dropInterval = setInterval(() => {
-            const newCoin = {
-                id: Date.now(),
-                // Ensure the coin is fully visible within the screen width
-                x: Math.random() * (window.innerWidth - coinSize),
-                y: 0
-            };
-            setCoins(prevCoins => [...prevCoins, newCoin]);
+            const newCoins = [];
+            for (let i = 0; i < coinsPerDrop; i++) {
+                const newCoin = {
+                    id: Date.now() + i, // Ensure unique IDs
+                    x: Math.random() * (window.innerWidth - coinSize),
+                    y: 0
+                };
+                newCoins.push(newCoin);
+            }
+            setCoins(prevCoins => [...prevCoins, ...newCoins]);
         }, dropFrequency);
 
         return () => clearInterval(dropInterval);
